@@ -41,7 +41,7 @@ public class NoeudServeurTest {
     Fichier fichier = new Fichier();
     fichier.setNom("FicServeur1.txt");
     listeFichiers.add(fichier);
-    Assert.assertEquals(listeFichiers, noeudServeur.listerFichiers());
+    Assert.assertEquals(listeFichiers, noeudServeur.getListeNomsFichiers());
   }
 
   @Test
