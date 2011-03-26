@@ -12,7 +12,8 @@ import java.util.List;
 
 /**
  *
- * @author maboisba
+ * @author Marc Boisban
+ * @author Kamel Gharout
  */
 public interface Duplication extends Remote{
 

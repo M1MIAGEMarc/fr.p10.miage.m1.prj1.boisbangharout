@@ -9,7 +9,8 @@ import java.util.HashMap;
 
 /**
  *
- * @author maboisba
+ * @author Marc Boisban
+ * @author Kamel Gharout
  */
 public class Fichier {
 

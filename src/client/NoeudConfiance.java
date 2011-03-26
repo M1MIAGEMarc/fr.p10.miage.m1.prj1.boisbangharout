@@ -8,7 +8,8 @@ import serveur.NoeudServeur;
 
 /**
  *
- * @author maboisba
+ * @author Marc Boisban
+ * @author Kamel Gharout
  */
 public class NoeudConfiance {
 

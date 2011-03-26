@@ -4,14 +4,17 @@ package client;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
-import client.Fichier;
-import client.NoeudClient;
-import client.NoeudConfiance;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.UnknownHostException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +22,8 @@ import junit.framework.Assert;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import serveur.Duplication;
+import serveur.NoeudServeur;
 
 /**
  *
@@ -51,19 +56,18 @@ public class NoeudClientTest {
       confidentialiteAttendue = 1;
       Assert.assertEquals(confidentialiteAttendue, listeFichiers.get(0).getNiveauConfidentialite());
 
-      noeudClient.assignerConfidentialite(listeFichiers.get(0).getNom(), 2);
+      noeudClient.assignerConfidentialite(listeFichiers.get(1).getNom(), 2);
       confidentialiteAttendue = 2;
       Assert.assertEquals(confidentialiteAttendue, listeFichiers.get(0).getNiveauConfidentialite());
 
-      noeudClient.assignerConfidentialite(listeFichiers.get(0).getNom(), 3);
+      noeudClient.assignerConfidentialite(listeFichiers.get(2).getNom(), 3);
       confidentialiteAttendue = 3;
       Assert.assertEquals(confidentialiteAttendue, listeFichiers.get(0).getNiveauConfidentialite());
 
-      noeudClient.assignerConfidentialite(listeFichiers.get(0).getNom(), 4);
+      noeudClient.assignerConfidentialite(listeFichiers.get(3).getNom(), 4);
       confidentialiteAttendue = 4;
       Assert.assertEquals(confidentialiteAttendue, listeFichiers.get(0).getNiveauConfidentialite());
-    }
-    else {
+    } else {
       Assert.fail();
 
     }
@@ -93,9 +97,8 @@ public class NoeudClientTest {
       adresse = "10.54.65.86";
       noeudClient.ajouterNoeudConfiance(adresse);
       Assert.assertEquals(adresse, listeNoeudsConfiance.get(3).getAdresse());
-    }
-    catch (ArrayIndexOutOfBoundsException e) {
-      Assert.assertNotNull(e);
+    } catch (IndexOutOfBoundsException e) {
+      Assert.fail();
     }
   }
 
@@ -104,39 +107,64 @@ public class NoeudClientTest {
     int confianceAttendue;
     List<NoeudConfiance> listeNoeudsConfiance = noeudClient.getListeNoeudsConfiance();
 
-    try {
-      NoeudConfiance noeudConfiance1 = new NoeudConfiance("10.54.65.85");
-      listeNoeudsConfiance.add(noeudConfiance1);
-      noeudClient.assignerConfiance("10.54.65.85", 1);
+    NoeudConfiance noeudConfiance1 = new NoeudConfiance("10.54.65.85");
+    listeNoeudsConfiance.add(noeudConfiance1);
+    noeudClient.assignerConfiance("10.54.65.85", 1);
 
-      NoeudConfiance noeudConfiance2 = new NoeudConfiance("10.54.65.85");
-      listeNoeudsConfiance.add(noeudConfiance2);
-      noeudClient.assignerConfiance("10.54.65.85", 2);
+    NoeudConfiance noeudConfiance2 = new NoeudConfiance("10.54.65.85");
+    listeNoeudsConfiance.add(noeudConfiance2);
+    noeudClient.assignerConfiance("10.54.65.85", 2);
 
-      NoeudConfiance noeudConfiance3 = new NoeudConfiance("10.54.65.85");
-      listeNoeudsConfiance.add(noeudConfiance3);
-      noeudClient.assignerConfiance("10.54.65.85", 3);
+    NoeudConfiance noeudConfiance3 = new NoeudConfiance("10.54.65.85");
+    listeNoeudsConfiance.add(noeudConfiance3);
+    noeudClient.assignerConfiance("10.54.65.85", 3);
 
-      confianceAttendue = 1;
-      Assert.assertEquals(confianceAttendue, listeNoeudsConfiance.get(0).getNiveauConfiance());
-      confianceAttendue = 2;
-      Assert.assertEquals(confianceAttendue, listeNoeudsConfiance.get(1).getNiveauConfiance());
-      confianceAttendue = 3;
-      Assert.assertEquals(confianceAttendue, listeNoeudsConfiance.get(2).getNiveauConfiance());
-    }
-    catch (ArrayIndexOutOfBoundsException e) {
-      Assert.assertNotNull(e);
-    }
+    confianceAttendue = 1;
+    Assert.assertEquals(confianceAttendue, listeNoeudsConfiance.get(0).getNiveauConfiance());
+    confianceAttendue = 2;
+    Assert.assertEquals(confianceAttendue, listeNoeudsConfiance.get(1).getNiveauConfiance());
+    confianceAttendue = 3;
+    Assert.assertEquals(confianceAttendue, listeNoeudsConfiance.get(2).getNiveauConfiance());
   }
 
+  @Test
   public void testDupliquerFichier() {
-    /*
-    FileReader fis = new FileReader("fic1.txt");
-    BufferedReader br = new BufferedReader(fis);
-    String adresse = "10.45.66.85";
+    try {
+      FileReader fileReader = null;
+      List<Fichier> listeFichiers = noeudClient.getListeFichiers();
+      String adresse = noeudClient.getAdresse();
 
-    noeudClient.dupliquerFichier(br, adresse);
-     */
+      try {
+        fileReader = new FileReader(listeFichiers.get(0).getNom());
+        BufferedReader br = new BufferedReader(fileReader);
+        noeudClient.dupliquerFichier(br, adresse);
+
+        for (NoeudConfiance noeudConfiance : noeudClient.getListeNoeudsConfiance()) {
+          Duplication duplication = (Duplication) Naming.lookup("rmi://" + noeudConfiance.getAdresse() + "/duplication");
+          Assert.assertNotNull(new FileReader(adresse + "_" + listeFichiers.get(0).getNom()));
+          List<String> listeNomFichiers = duplication.getListeNomsFichiers();
+
+          if (noeudConfiance.getNiveauConfiance() >= listeFichiers.get(1).getNiveauConfidentialite()) {
+            Assert.assertTrue(listeNomFichiers.contains(adresse + "_" + listeFichiers.get(1).getNom()));
+          }
+
+          if (noeudConfiance.getNiveauConfiance() >= listeFichiers.get(2).getNiveauConfidentialite()) {
+            Assert.assertTrue(listeNomFichiers.contains(adresse + "_" + listeFichiers.get(2).getNom()));
+          }
+
+        }
+      } catch (FileNotFoundException ex) {
+        Assert.fail();
+      }
+    } catch (NotBoundException ex) {
+      Assert.fail();
+    } catch (MalformedURLException ex) {
+      Assert.fail();
+    } catch (RemoteException ex) {
+      Assert.fail();
+    } catch (IndexOutOfBoundsException e) {
+      Assert.fail();
+    }
   }
 
   @Test
@@ -153,9 +181,8 @@ public class NoeudClientTest {
       Assert.assertEquals("10.54.65.85", listeNoeudsConfiance.get(2));
       Assert.assertEquals("10.54.65.86", listeNoeudsConfiance.get(3));
       Assert.assertEquals(null, listeNoeudsConfiance.get(4));
-    }
-    catch (ArrayIndexOutOfBoundsException e) {
-      Assert.assertNotNull(e);
+    } catch (IndexOutOfBoundsException e) {
+      Assert.fail();
     }
   }
 
@@ -175,9 +202,8 @@ public class NoeudClientTest {
       Assert.assertEquals(true, listeFichiers.get(0).getNoeudsConfianceMap().containsKey("10.54.65.86"));
       Assert.assertEquals(true, (boolean) listeFichiers.get(0).getNoeudsConfianceMap().get("10.54.65.84"));
       Assert.assertEquals(false, (boolean) listeFichiers.get(0).getNoeudsConfianceMap().get("10.54.65.86"));
-    }
-    catch (ArrayIndexOutOfBoundsException e) {
-      Assert.assertNotNull(e);
+    } catch (IndexOutOfBoundsException e) {
+      Assert.fail();
     }
   }
 
@@ -195,38 +221,96 @@ public class NoeudClientTest {
       noeudClient.supprimerNoeudConfianceFichier(listeFichiers.get(0).getNom(), "10.54.65.86");
       Assert.assertEquals(false, listeFichiers.get(0).getNoeudsConfianceMap().containsKey("10.54.65.84"));
       Assert.assertEquals(false, listeFichiers.get(0).getNoeudsConfianceMap().containsKey("10.54.65.86"));
-    }
-    catch(ArrayIndexOutOfBoundsException e) {
-      Assert.assertNotNull(e);
+    } catch (IndexOutOfBoundsException e) {
+      Assert.fail();
     }
   }
 
+  @Test
   public void testNettoyerFichiersDupliques() {
+    try {
+      Duplication duplication;
+      FileReader fileReader = null;
+      List<Fichier> listeFichiers = noeudClient.getListeFichiers();
+      String adresse = noeudClient.getAdresse();
+      List<String> fichiersSauves = new ArrayList<String>();
+
+      fileReader = new FileReader(listeFichiers.get(0).getNom());
+      BufferedReader br = new BufferedReader(fileReader);
+      noeudClient.dupliquerFichier(br, adresse);
+
+      for (NoeudConfiance noeudConfiance : noeudClient.getListeNoeudsConfiance()) {
+        duplication = (Duplication) Naming.lookup("rmi://" + noeudConfiance.getAdresse() + "/duplication");
+        Assert.assertNotNull(new FileReader(adresse + "_" + listeFichiers.get(0).getNom()));
+        List<String> listeNomFichiers = duplication.getListeNomsFichiers();
+        for (String nomFichier : listeNomFichiers) {
+          int indexSeparateur = nomFichier.indexOf("_");
+          if(nomFichier.substring(0, indexSeparateur).equals(adresse)){
+            fichiersSauves.add(nomFichier);
+          }
+        }
+      }
+
+      noeudClient.nettoyerFichiersDupliques();
+
+      for (NoeudConfiance noeudConfiance : noeudClient.getListeNoeudsConfiance()) {
+        duplication = (Duplication) Naming.lookup("rmi://" + noeudConfiance.getAdresse() + "/duplication");
+        Assert.assertNotNull(new FileReader(adresse + "_" + listeFichiers.get(0).getNom()));
+        List<String> listeNomFichiers = duplication.getListeNomsFichiers();
+        for (String nomFichier : listeNomFichiers) {
+          int indexSeparateur = nomFichier.indexOf("_");
+          if(nomFichier.substring(0, indexSeparateur).equals(adresse)){
+            Assert.fail();
+          }
+        }
+      }
+
+    } catch (NotBoundException ex) {
+      Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (MalformedURLException ex) {
+      Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (RemoteException ex) {
+      Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (FileNotFoundException e) {
+    }
+    catch(IndexOutOfBoundsException e){
+      Assert.fail();
+    }
   }
 
+  @Test
   public void testRecupererFichiersPerdus() {
+    try {
+      String nomFichier, adresse;
+      BufferedReader br1;
+      InetAddress Ip = InetAddress.getLocalHost();
+      adresse = Ip.getHostAddress();
+      nomFichier = "fic1.txt";
+      noeudClient.recupererFichiersPerdus();
+      Assert.assertNotNull(new FileReader(adresse + "_" + nomFichier));
+    } catch (UnknownHostException ex) {
+      Assert.fail();
+    } catch (FileNotFoundException fnfe) {
+      Assert.fail();
+    }
+
   }
 
   @Test
   public void testEcrireFichierPerdu() {
-    BufferedReader br1 = null;
+    BufferedReader br1;
     try {
-      String nomFichier = "Fic2.txt";
+      String nomFichier = "Fic3.txt";
       List<Fichier> listeFichiers = noeudClient.getListeFichiers();
-      br1 = new BufferedReader(new FileReader("Fic3.txt"));
-      BufferedReader br2 = new BufferedReader(new FileReader("Fic3.txt"));
-      //ecrireFichierPerdu(new HashMap<nomFichier, br2>() fichierMap);
-    }
-    catch (FileNotFoundException ex) {
-      Assert.assertNotNull(ex.getMessage());
-    }
-    finally {
-      try {
-        br1.close();
-      }
-      catch (IOException ex) {
-        Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
-      }
+      br1 = new BufferedReader(new FileReader(nomFichier));
+      noeudClient.ecrireFichierPerdu(nomFichier, br1);
+      //BufferedReader br2 = new BufferedReader(new FileReader(nomFichier));
+      FileReader fileReader = new FileReader(nomFichier);
+      br1.close();
+    } catch (FileNotFoundException ex) {
+      Assert.fail();
+    } catch (IOException ex) {
+      Assert.fail();
     }
   }
 }

@@ -9,15 +9,14 @@ import java.io.BufferedReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  *
- * @author maboisba
+ * @author Marc Boisban
+ * @author Kamel Gharout
  */
 public class NoeudClient {
 
