@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  *
  * @author maboisba
@@ -26,6 +27,7 @@ public class NoeudServeur implements Duplication{
   }
 
   public void ecrireFichier(String adresse, BufferedReader donnees, String nomFichier){
+    System.out.println("test");
   }
 
   public void supprimerFichier(String nomFichier){
