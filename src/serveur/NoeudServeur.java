@@ -6,6 +6,7 @@
 package serveur;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -31,7 +32,16 @@ public class NoeudServeur implements Duplication{
   public void ecrireFichier(String adresse, BufferedReader donnees, String nomFichier){
   }
 
+  /**
+   * Permet de supprimer un fichier dont le nom est passé en paramètre.
+   * Cette méthode sera appelée lors du nettoyage des fichiers supprimés.
+   *
+   * @param nomFichier
+   *        Le nom du fichier à supprimer
+   */
   public void supprimerFichier(String nomFichier){
+    File file = new File(nomFichier);
+    file.delete();
   }
 
   

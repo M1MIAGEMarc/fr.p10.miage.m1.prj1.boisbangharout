@@ -4,17 +4,10 @@
  */
 package serveur;
 
-import client.Fichier;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import junit.framework.Assert;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -53,14 +46,13 @@ public class NoeudServeurTest {
     }
   }
 
-  //@Test
+  @Test
   public void testSupprimerFichier() {
     try {
-      noeudServeur.supprimerFichier("10.50.56.11_FichierTest.dat");
-      FileReader fileReader = new FileReader("10.50.56.11_FichierTest.dat");
+      noeudServeur.supprimerFichier("10.50.56.10_FichierTestSuppression.dat");
+      FileReader fileReader = new FileReader("10.50.56.10_FichierTestSuppression.dat");
     } catch (FileNotFoundException fnfe) {
-      //Assert.assertTrue(true); A décommenter lors du codage de la méthode supprimerFichier()
-      Assert.fail(); // A supprimer lors du codage de la méthode supprimerFichier()
+      Assert.assertTrue(true);
     }
   }
 
