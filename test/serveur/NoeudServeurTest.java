@@ -69,11 +69,15 @@ public class NoeudServeurTest {
     try {
       BufferedReader br = noeudServeur.extraireDonnees("10.50.56.11_FichierTest.dat");
       boolean fichierNonVide;
-      if (br.read() > 0)
-        fichierNonVide = true;
-      else
-        fichierNonVide = false;
-      Assert.assertTrue(fichierNonVide);
+
+      if (br.read() == 0)
+        Assert.fail();
+
+      // Test avec un fichier vide en entrée, l'extraction ne doit donc pas renvoyer de données
+      br = noeudServeur.extraireDonnees("10.50.56.11_FichierTestVide.dat");
+      if (br.read() != -1)
+        Assert.fail();
+        
     } catch (FileNotFoundException ex) {
       Assert.fail();
     } catch (IOException ioe) {
