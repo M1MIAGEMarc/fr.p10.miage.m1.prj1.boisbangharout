@@ -4,6 +4,7 @@
  */
 package serveur;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -21,11 +22,12 @@ public class MainServeur {
    */
   public static void main(String[] args) throws Exception {
     NoeudServeur noeudServeur = new NoeudServeur();
-    Duplication duplicationStub = (Duplication) UnicastRemoteObject.exportObject(noeudServeur, 0);
+    Duplication duplicationStub = (Duplication) UnicastRemoteObject.exportObject(noeudServeur, 1024);
 
     Registry registry = LocateRegistry.createRegistry(1099);
-
-    registry.rebind("NoeudServeur", registry);
+    InetAddress adress = Inet4Address.getLocalHost();
+    String adresse = adress.getHostAddress();
+    registry.rebind("rmi://"+adresse + "/NoeudServeur", duplicationStub);
     System.out.println("Noeud serveur opérationnel.");
   }
 }

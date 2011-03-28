@@ -4,6 +4,7 @@
  */
 package client;
 
+import serveur.Duplication;
 import serveur.NoeudServeur;
 
 /**
@@ -14,7 +15,7 @@ import serveur.NoeudServeur;
 public class NoeudConfiance {
 
   private String adresse;
-  private NoeudServeur noeudServeur;
+  private Duplication duplication;
   private int niveauConfiance;
 
   public NoeudConfiance() {
@@ -22,11 +23,13 @@ public class NoeudConfiance {
 
   public NoeudConfiance(String adresse) {
     this.adresse = adresse;
+    niveauConfiance = 1;
   }
 
-  public NoeudConfiance(String adresse, int niveauConfiance) {
+  public NoeudConfiance(String adresse, Duplication duplication) {
     this.adresse = adresse;
-    this.niveauConfiance = niveauConfiance;
+    this.duplication = duplication;
+    this.niveauConfiance = 1;
   }
 
   public String getAdresse() {
@@ -45,12 +48,13 @@ public class NoeudConfiance {
     this.niveauConfiance = niveauConfiance;
   }
 
-  public NoeudServeur getNoeudServeur() {
-    return noeudServeur;
+  public Duplication getDuplication() {
+    return duplication;
   }
 
-  public void setNoeudServeur(NoeudServeur noeudServeur) {
-    this.noeudServeur = noeudServeur;
+  public void setDuplication(Duplication duplication) {
+    this.duplication = duplication;
   }
-  
+
+
 }

@@ -7,6 +7,7 @@ package serveur;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import junit.framework.Assert;
 import org.junit.AfterClass;
@@ -49,10 +50,15 @@ public class NoeudServeurTest {
   @Test
   public void testSupprimerFichier() {
     try {
+      FileWriter fw = new FileWriter("10.50.56.10_FichierTestSuppression.dat");
+      fw.write("Test");
+      fw.close();
       noeudServeur.supprimerFichier("10.50.56.10_FichierTestSuppression.dat");
       FileReader fileReader = new FileReader("10.50.56.10_FichierTestSuppression.dat");
     } catch (FileNotFoundException fnfe) {
       Assert.assertTrue(true);
+    } catch(Exception e) {
+      
     }
   }
 

@@ -18,7 +18,11 @@ public class Fichier {
   private int niveauConfidentialite;
   private HashMap<String, Boolean> noeudsConfianceMap;
 
-  public Fichier() {
+
+  public Fichier(String nom) {
+    this.nom = nom;
+    niveauConfidentialite = 4;
+    noeudsConfianceMap = new HashMap<String, Boolean>();
   }
 
   public Fichier(String nom, int niveauConfidentialite, HashMap<String, Boolean> noeudsConfianceMap) {
