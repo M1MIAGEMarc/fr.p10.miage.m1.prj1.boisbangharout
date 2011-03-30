@@ -64,6 +64,7 @@ public class NoeudServeur implements Duplication{
                 while ((ligne = donnees.readLine()) != null) {
                     bw.write(ligne);
                     bw.flush();
+                   
 
                 }
                 bw.close();
