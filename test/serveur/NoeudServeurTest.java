@@ -4,12 +4,11 @@
  */
 package serveur;
 
-import client.Fichier;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.FileWriter;
+import java.io.IOException;
 import junit.framework.Assert;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -36,15 +35,6 @@ public class NoeudServeurTest {
   }
 
   @Test
-  public void testListerFichiers() {
-    List<Fichier> listeFichiers = new ArrayList<Fichier>();
-    Fichier fichier = new Fichier();
-    fichier.setNom("FicServeur1.txt");
-    listeFichiers.add(fichier);
-    Assert.assertEquals(listeFichiers, noeudServeur.getListeNomsFichiers());
-  }
-
-  @Test
   public void testEcrireFichier() {
     BufferedReader donnees;
 
@@ -52,13 +42,7 @@ public class NoeudServeurTest {
       donnees = new BufferedReader(new FileReader("FichierTest.txt"));
       noeudServeur.ecrireFichier("10.50.56.11", donnees, "FichierTest.dat");
       Assert.assertNotNull(new FileReader("10.50.56.11_FichierTest.dat"));
-      /*
-      noeudServeur.ecrireFichier("10.50.56.11", donnees, "FichierTest.txt");
-      Assert.assertEquals("10.50.56.11_FichierTest.txt", noeudServeur.listerFichiers().get(noeudServeur.listerFichiers().size() - 1));
-      Assert.assertEquals("10.50.56.11_FichierTest.dat", noeudServeur.listerFichiers().get(noeudServeur.listerFichiers().size() - 2));
-       */
-    }
-    catch (FileNotFoundException fnfe) {
+    } catch (FileNotFoundException fnfe) {
       Assert.fail();
     }
   }
@@ -66,21 +50,35 @@ public class NoeudServeurTest {
   @Test
   public void testSupprimerFichier() {
     try {
-      noeudServeur.supprimerFichier("10.50.56.11_FichierTest.dat");
-      FileReader fileReader = new FileReader("10.50.56.11_FichierTest.dat");
-    }
-    catch (FileNotFoundException ex) {
-      Assert.fail();
+      FileWriter fw = new FileWriter("10.50.56.10_FichierTestSuppression.dat");
+      fw.write("Test");
+      fw.close();
+      noeudServeur.supprimerFichier("10.50.56.10_FichierTestSuppression.dat");
+      FileReader fileReader = new FileReader("10.50.56.10_FichierTestSuppression.dat");
+    } catch (FileNotFoundException fnfe) {
+      Assert.assertTrue(true);
+    } catch(Exception e) {
+      
     }
   }
 
   @Test
   public void testExtraireDonneesFichier() {
     try {
-      noeudServeur.extraireDonnees("10.50.56.11_FichierTest.dat");
-      FileReader fileReader = new FileReader("10.50.56.11_FichierTest.dat");
-    }
-    catch (FileNotFoundException ex) {
+      BufferedReader br = noeudServeur.extraireDonnees("10.50.56.11_FichierTest.dat");
+      boolean fichierNonVide;
+
+      if (br.read() == 0)
+        Assert.fail();
+
+      // Test avec un fichier vide en entrée, l'extraction ne doit donc pas renvoyer de données
+      br = noeudServeur.extraireDonnees("10.50.56.11_FichierTestVide.dat");
+      if (br.read() != -1)
+        Assert.fail();
+        
+    } catch (FileNotFoundException ex) {
+      Assert.fail();
+    } catch (IOException ioe) {
       Assert.fail();
     }
   }

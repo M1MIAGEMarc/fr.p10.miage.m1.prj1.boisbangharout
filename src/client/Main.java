@@ -7,7 +7,8 @@ package client;
 
 /**
  *
- * @author maboisba
+ * @author Marc Boisban
+ * @author Kamel Gharout
  */
 public class Main {
 
