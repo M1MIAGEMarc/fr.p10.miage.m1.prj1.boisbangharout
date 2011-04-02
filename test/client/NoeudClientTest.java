@@ -223,18 +223,24 @@ public class NoeudClientTest {
 
   @Test
   public void testSupprimerNoeudConfianceFichier() {
+
     List<Fichier> listeFichiers = noeudClient.getListeFichiers();
+    Fichier fichier1 = new Fichier("FicSupNoeudConfFichier1.txt");
+    fichier1.getNoeudsConfianceMap().put("10.54.65.84", false);
+    fichier1.getNoeudsConfianceMap().put("10.54.65.86", true);
+    listeFichiers.add(fichier1);
+    
     try {
-      Assert.assertEquals(true, listeFichiers.get(0).getNoeudsConfianceMap().containsKey("10.54.65.84"));
-      Assert.assertEquals(true, listeFichiers.get(0).getNoeudsConfianceMap().containsKey("10.54.65.86"));
+      Assert.assertEquals(true, fichier1.getNoeudsConfianceMap().containsKey("10.54.65.84"));
+      Assert.assertEquals(true, fichier1.getNoeudsConfianceMap().containsKey("10.54.65.86"));
 
-      noeudClient.supprimerNoeudConfianceFichier(listeFichiers.get(0).getNom(), "10.54.65.84");
-      Assert.assertEquals(false, listeFichiers.get(0).getNoeudsConfianceMap().containsKey("10.54.65.84"));
-      Assert.assertEquals(true, listeFichiers.get(0).getNoeudsConfianceMap().containsKey("10.54.65.86"));
+      noeudClient.supprimerNoeudConfianceFichier(fichier1.getNom(), "10.54.65.84");
+      Assert.assertEquals(false, fichier1.getNoeudsConfianceMap().containsKey("10.54.65.84"));
+      Assert.assertEquals(true, fichier1.getNoeudsConfianceMap().containsKey("10.54.65.86"));
 
-      noeudClient.supprimerNoeudConfianceFichier(listeFichiers.get(0).getNom(), "10.54.65.86");
-      Assert.assertEquals(false, listeFichiers.get(0).getNoeudsConfianceMap().containsKey("10.54.65.84"));
-      Assert.assertEquals(false, listeFichiers.get(0).getNoeudsConfianceMap().containsKey("10.54.65.86"));
+      noeudClient.supprimerNoeudConfianceFichier(fichier1.getNom(), "10.54.65.86");
+      Assert.assertEquals(false, fichier1.getNoeudsConfianceMap().containsKey("10.54.65.84"));
+      Assert.assertEquals(false, fichier1.getNoeudsConfianceMap().containsKey("10.54.65.86"));
     } catch (IndexOutOfBoundsException e) {
       Assert.fail();
     }
@@ -315,13 +321,13 @@ public class NoeudClientTest {
     BufferedReader br1;
     try {
       String nomFichier = "Fic3.txt";
-      List<Fichier> listeFichiers = noeudClient.getListeFichiers();
       br1 = new BufferedReader(new FileReader(nomFichier));
-      noeudClient.ecrireFichierPerdu(nomFichier, br1);
-      //BufferedReader br2 = new BufferedReader(new FileReader(nomFichier));
-      FileReader fileReader = new FileReader(nomFichier);
+      noeudClient.ecrireFichierPerdu("(2)-" + nomFichier, br1);
+      // Le "(2)-" sert simplement à différencier les fichiers en sortie pour les tests
+      FileReader fileReader = new FileReader("(2)-"+nomFichier);
       br1.close();
     } catch (FileNotFoundException ex) {
+      ex.printStackTrace();
       Assert.fail();
     } catch (IOException ex) {
       Assert.fail();

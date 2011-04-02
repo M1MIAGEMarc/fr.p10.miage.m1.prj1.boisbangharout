@@ -40,9 +40,10 @@ public class NoeudServeurTest {
 
     try {
       donnees = new BufferedReader(new FileReader("FichierTest.txt"));
-      noeudServeur.ecrireFichier("10.50.56.11", donnees, "FichierTest.dat");
-      Assert.assertNotNull(new FileReader("10.50.56.11_FichierTest.dat"));
+      noeudServeur.ecrireFichier("10.50.56.10", donnees, "FichierTest.txt");
+      Assert.assertNotNull(new FileReader("10.50.56.10_FichierTest.txt"));
     } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
       Assert.fail();
     }
   }

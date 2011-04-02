@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package serveur;
 
 import java.io.BufferedReader;
@@ -17,25 +16,24 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  *
  * @author Marc Boisban
  * @author Kamel Gharout
  */
-public class NoeudServeur implements Duplication{
+public class NoeudServeur implements Duplication {
 
   private List<String> listeNomsFichiers;
 
   public NoeudServeur() {
-    listeNomsFichiers  = new ArrayList<String>();
+    listeNomsFichiers = new ArrayList<String>();
   }
 
   public List<String> getListeNomsFichiers() {
     return listeNomsFichiers;
   }
 
-   /**
+  /**
    * Permet d'écrire un fichier sur le noeud de confiance.
    * Cette méthode écrit le paramètre données dans un fichier
    * sur le serveur et est nommé avec le paramètre nom prefixé du paramètre adresse
@@ -51,29 +49,27 @@ public class NoeudServeur implements Duplication{
    *         Le nom du fichier dont on souhaite écrire le contenu
    *
    */
-  public void ecrireFichier(String adresse, BufferedReader donnees, String nomFichier){
-      boolean FichierCreer = false;
-      String ligne;
-      File file = new File ("adresse" + "nomFichier"); 
-        
-        try {
-                FichierCreer = file.createNewFile();
-                FileWriter fw = new FileWriter(file, true);
-                BufferedWriter bw = new BufferedWriter(fw);
+  public void ecrireFichier(String adresse, BufferedReader donnees, String nomFichier) {
+    boolean FichierCreer = false;
+    String ligne;
+    File file = new File(adresse + "_" + nomFichier);
 
-                while ((ligne = donnees.readLine()) != null) {
-                    bw.write(ligne);
-                    bw.flush();
-                   
+    try {
+      FichierCreer = file.createNewFile();
+      FileWriter fw = new FileWriter(file, true);
+      BufferedWriter bw = new BufferedWriter(fw);
 
-                }
-                bw.close();
-
-        } catch (IOException ex) {
-            Logger.getLogger(NoeudServeur.class.getName()).log(Level.SEVERE, null, ex);
-        }
+      while ((ligne = donnees.readLine()) != null) {
+        bw.write(ligne);
+        bw.flush();
 
 
+      }
+      bw.close();
+
+    } catch (IOException ex) {
+      Logger.getLogger(NoeudServeur.class.getName()).log(Level.SEVERE, null, ex);
+    }
   }
 
   /**
@@ -83,12 +79,11 @@ public class NoeudServeur implements Duplication{
    * @param nomFichier
    *        Le nom du fichier à supprimer
    */
-  public void supprimerFichier(String nomFichier){
+  public void supprimerFichier(String nomFichier) {
     File file = new File(nomFichier);
     file.delete();
   }
 
-  
   /**
    * Permet d'extraire les données d'un fichier contenu sur le serveur
    * à partir du nom du fichier en question.
@@ -102,18 +97,15 @@ public class NoeudServeur implements Duplication{
    * @return Les données extraites du fichier dont le nom est passé
    *         en paramètre
    */
-  public BufferedReader extraireDonnees(String nomFichier){
+  public BufferedReader extraireDonnees(String nomFichier) {
     FileReader fr;
     try {
       fr = new FileReader(nomFichier);
-    }
-    catch (FileNotFoundException fnfe) {
+    } catch (FileNotFoundException fnfe) {
       System.out.println("Erreur lors de l'ouverture du fichier " + nomFichier);
       fnfe.printStackTrace();
       fr = null;
     }
     return new BufferedReader(fr);
   }
-
-
 }

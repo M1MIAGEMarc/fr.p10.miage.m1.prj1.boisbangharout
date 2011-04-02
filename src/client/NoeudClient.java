@@ -2,10 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package client;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.registry.LocateRegistry;
@@ -15,6 +18,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import serveur.Duplication;
+import serveur.NoeudServeur;
 
 /**
  *
@@ -33,8 +37,7 @@ public class NoeudClient {
       adresse = Ip.getHostAddress();
       listeFichiers = new ArrayList<Fichier>();
       listeNoeudsConfiance = new ArrayList<NoeudConfiance>();
-    }
-    catch (UnknownHostException ex) {
+    } catch (UnknownHostException ex) {
       Logger.getLogger(NoeudClient.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
@@ -89,12 +92,12 @@ public class NoeudClient {
   public void assignerConfidentialite(String nomFichier, int niveauConfidentialite) {
 
     for (Fichier fichier : listeFichiers) {
-      if(fichier.getNom().equals(nomFichier)) {
+      if (fichier.getNom().equals(nomFichier)) {
         fichier.setNiveauConfidentialite(niveauConfidentialite);
         break;
       }
     }
-    
+
   }
 
   /**
@@ -105,14 +108,13 @@ public class NoeudClient {
    * @param adresse
    *        L'adresse du noeud de confiance que l'on souhaite ajouter
    */
-  public void ajouterNoeudConfiance(String adresse){
+  public void ajouterNoeudConfiance(String adresse) {
     try {
       Registry registry = LocateRegistry.getRegistry();
-      Duplication duplication = (Duplication) registry.lookup("rmi://"+adresse+"/NoeudServeur");
+      Duplication duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");
       NoeudConfiance noeudConfiance = new NoeudConfiance(adresse, duplication);
       listeNoeudsConfiance.add(noeudConfiance);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
@@ -133,18 +135,18 @@ public class NoeudClient {
    * @param niveauConfiance
    *        Le degré de confiance que l'on souhaite affecter au noeud
    */
-  public void assignerConfiance(String adresse, int niveauConfiance){
+  public void assignerConfiance(String adresse, int niveauConfiance) {
 
     for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
-      if(noeudConfiance.getAdresse().equals(adresse)) {
+      if (noeudConfiance.getAdresse().equals(adresse)) {
         noeudConfiance.setNiveauConfiance(niveauConfiance);
         break;
       }
     }
-    
+
   }
 
-  public void dupliquerFichier(BufferedReader donnees, String adresse){
+  public void dupliquerFichier(BufferedReader donnees, String adresse) {
   }
 
   /**
@@ -155,28 +157,74 @@ public class NoeudClient {
    * @param adresse
    *        L'adresse du noeud de confiance à supprimer
    */
-  public void supprimerNoeudConfiance(String adresse){
+  public void supprimerNoeudConfiance(String adresse) {
 
     for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
-      if(noeudConfiance.getAdresse().equals(adresse)) {
+      if (noeudConfiance.getAdresse().equals(adresse)) {
         listeNoeudsConfiance.remove(noeudConfiance);
         break;
       }
     }
   }
 
-  public void ajouterNoeudConfianceFichier(String nomFichier, String adresse, boolean mode){
+  public void ajouterNoeudConfianceFichier(String nomFichier, String adresse, boolean mode) {
   }
 
-  public void supprimerNoeudConfianceFichier(String nomFichier, String adresse){
+  /**
+   * L'objectif de cette méthode est de supprimer un noeud de la liste des noeuds
+   * de confiance spécifique pour un fichier.
+   * 
+   * @param nomFichier
+   *        Le nom du fichier pour lequel on souhaite supprimer le noeud de confiance
+   * @param adresse
+   *        L'adresse du noeude de confiance à supprimer de la liste du fichier
+   */
+  public void supprimerNoeudConfianceFichier(String nomFichier, String adresse) {
+
+    for (Fichier fichier : listeFichiers) {
+      if (fichier.getNom().equals(nomFichier)) {
+        fichier.getNoeudsConfianceMap().remove(adresse);
+        break;
+      }
+    }
   }
 
-  public void nettoyerFichiersDupliques(){
+  public void nettoyerFichiersDupliques() {
   }
 
-  public void recupererFichiersPerdus(){
+  public void recupererFichiersPerdus() {
   }
 
-  public void ecrireFichierPerdu(String nomFichier, BufferedReader donnees){
+  /**
+   * Permet d'écrire sur le client un fichier à partir des données récupérées d'un
+   * noeud de confiance.
+   *
+   * @param nomFichier
+   *        Le nom du fichier à créer sur la machine cliente
+   *
+   * @param donnees
+   *        Les
+   */
+  public void ecrireFichierPerdu(String nomFichier, BufferedReader donnees) {
+
+    String ligne;
+    File file = new File(nomFichier);
+
+    try {
+      file.createNewFile();
+      FileWriter fw = new FileWriter(file, true);
+      BufferedWriter bw = new BufferedWriter(fw);
+
+      while ((ligne = donnees.readLine()) != null) {
+        bw.write(ligne);
+        bw.flush();
+
+
+      }
+      bw.close();
+
+    } catch (IOException ex) {
+      Logger.getLogger(NoeudServeur.class.getName()).log(Level.SEVERE, null, ex);
+    }
   }
 }
