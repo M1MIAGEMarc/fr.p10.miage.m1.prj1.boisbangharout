@@ -22,7 +22,7 @@ public class MainServeur {
    */
   public static void main(String[] args) throws Exception {
     NoeudServeur noeudServeur = new NoeudServeur();
-    Duplication duplicationStub = (Duplication) UnicastRemoteObject.exportObject(noeudServeur, 1024);
+    Duplication duplicationStub = (Duplication) UnicastRemoteObject.exportObject(noeudServeur, 0);
 
     Registry registry = LocateRegistry.createRegistry(1099);
     InetAddress adress = Inet4Address.getLocalHost();

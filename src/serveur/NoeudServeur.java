@@ -27,6 +27,15 @@ public class NoeudServeur implements Duplication {
 
   public NoeudServeur() {
     listeNomsFichiers = new ArrayList<String>();
+    File file = new File(".");
+    File[] files = file.listFiles();
+    System.out.println("test");
+    for (int i = 0; i < files.length; i++) {
+      if (files[i].isFile()) {
+        System.out.println(files[i].getName());
+        listeNomsFichiers.add(files[i].getName());
+      }
+    }
   }
 
   public List<String> getListeNomsFichiers() {
@@ -67,7 +76,8 @@ public class NoeudServeur implements Duplication {
       }
       bw.close();
 
-    } catch (IOException ex) {
+    }
+    catch (IOException ex) {
       Logger.getLogger(NoeudServeur.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
@@ -101,7 +111,8 @@ public class NoeudServeur implements Duplication {
     FileReader fr;
     try {
       fr = new FileReader(nomFichier);
-    } catch (FileNotFoundException fnfe) {
+    }
+    catch (FileNotFoundException fnfe) {
       System.out.println("Erreur lors de l'ouverture du fichier " + nomFichier);
       fnfe.printStackTrace();
       fr = null;

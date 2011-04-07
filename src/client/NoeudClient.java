@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
@@ -111,7 +112,9 @@ public class NoeudClient {
   public void ajouterNoeudConfiance(String adresse) {
     try {
       Registry registry = LocateRegistry.getRegistry();
+      
       Duplication duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");
+      System.out.println("rmi://" + adresse + "/NoeudServeur");
       NoeudConfiance noeudConfiance = new NoeudConfiance(adresse, duplication);
       listeNoeudsConfiance.add(noeudConfiance);
     } catch (Exception e) {
@@ -189,8 +192,52 @@ public class NoeudClient {
     }
   }
 
+  /**
+   * Permet de supprimer sur les noeuds de confiance les fichiers dupliqués par le client
+   * courant et qui ne figurent plus sur sa propre machine.
+   *
+   * Pour savoir si les fichiers du noeud de confiance sont des fichiers dupliqués par le
+   * noeud client, il suffit de vérifier que le nom du fichier commence par l'adresse de
+   * celui-ci.
+   *
+   * Exemple : 10.54.65.81_fic.txt (si l'adresse du noeud client est 10.54.65.81)
+   */
   public void nettoyerFichiersDupliques() {
+
+    boolean trouve = false;
+    for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
+      
+      try {
+        List<String> listeFichiersServeur = noeudConfiance.getDuplication().getListeNomsFichiers();
+
+        for (String nomFichier : listeFichiersServeur) {
+          trouve = false;
+          System.out.println(nomFichier);
+          if (nomFichier.length() > adresse.length()
+                  && nomFichier.substring(0, adresse.length()).equals(adresse)) {
+            
+            for (Fichier fichier : listeFichiers) {
+              System.out.println("nomFichier : " + fichier.getNom());
+                System.out.println("nomFichierClient : " + nomFichier.substring(adresse.length() + 1, nomFichier.length()));
+                System.out.println("");
+              if (fichier.getNom().equals(nomFichier.substring(adresse.length() + 1, nomFichier.length()))) {
+                
+                trouve = true;
+                break;
+              }
+            }
+            if (!trouve) {
+              noeudConfiance.getDuplication().supprimerFichier(nomFichier);
+              System.out.println("Fichier '" + nomFichier + "' supprimé.");
+            }
+          }
+        }
+      } catch (RemoteException re) {
+        re.printStackTrace();
+      }
+    }
   }
+
 
   public void recupererFichiersPerdus() {
   }
