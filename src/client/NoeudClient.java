@@ -170,7 +170,26 @@ public class NoeudClient {
     }
   }
 
-  public void ajouterNoeudConfianceFichier(String nomFichier, String adresse, boolean mode) {
+   /**
+   * L'objectif de cette méthode est d'ajouter un noeud à la liste des noeuds
+   * de confiance spécifique pour un fichier.
+   *
+   * @param nomFichier
+   *        Le nom du fichier pour lequel on souhaite ajouter le noeud de confiance
+   * @param adresse
+   *        L'adresse du noeude de confiance à ajouter à la liste du fichier
+   * @param mode
+   *        Accepter la duplication du fichier sur le noeud de confiance
+   *
+   */
+public void ajouterNoeudConfianceFichier(String nomFichier, String adresse, boolean mode) {
+
+    for (Fichier fichier : listeFichiers) {
+      if (fichier.getNom().equals(nomFichier)) {
+        fichier.getNoeudsConfianceMap().put(adresse, mode);
+        break;
+      }
+    }
   }
 
   /**
