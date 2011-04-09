@@ -76,8 +76,9 @@ public class NoeudServeur implements Duplication {
       }
       bw.close();
 
-    }
-    catch (IOException ex) {
+      listeNomsFichiers.add(adresse + "_" + nomFichier);
+      System.out.println("Fichier '" + adresse + "_" + nomFichier + "' ajouté.");
+    } catch (IOException ex) {
       Logger.getLogger(NoeudServeur.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
@@ -92,6 +93,8 @@ public class NoeudServeur implements Duplication {
   public void supprimerFichier(String nomFichier) {
     File file = new File(nomFichier);
     file.delete();
+    listeNomsFichiers.remove(nomFichier);
+    System.out.println("Fichier '" + nomFichier + "' supprimé.");
   }
 
   /**
@@ -111,8 +114,7 @@ public class NoeudServeur implements Duplication {
     FileReader fr;
     try {
       fr = new FileReader(nomFichier);
-    }
-    catch (FileNotFoundException fnfe) {
+    } catch (FileNotFoundException fnfe) {
       System.out.println("Erreur lors de l'ouverture du fichier " + nomFichier);
       fnfe.printStackTrace();
       fr = null;

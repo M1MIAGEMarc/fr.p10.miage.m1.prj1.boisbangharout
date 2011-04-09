@@ -149,6 +149,19 @@ public class NoeudClient {
 
   }
 
+  /*
+   * Cette méthode est le traitement principal du projet, il permet la duplication
+   * de fichiers sur des noeuds de confiance. Cette duplication se peut s'effectuer que
+   * sous certaines conditions:
+   *
+   * - les degrés de confidentialité des fichiers à dupliquer doivent être compatibles
+   *   avec les degrés de confiance des noeuds
+   *
+   * - un noeud de confiance peuvent être soumis à un traitement particulier pour
+   *   certains fichiers. Dans ce cas précis, son degré de confiance n'est pas
+   *   pris en compte pour la détermination du droit de duplication pour ces fichiers
+   *   en question.
+   */
   public void dupliquerFichier(BufferedReader donnees, String adresse) {
   }
 
