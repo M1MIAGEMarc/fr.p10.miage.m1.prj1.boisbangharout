@@ -1,1 +1,1 @@
-Fichier test pour ecrireFichier()
+Test pour ecrireFichier()
