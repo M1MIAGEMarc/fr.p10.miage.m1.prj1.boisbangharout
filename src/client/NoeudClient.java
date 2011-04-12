@@ -4,11 +4,15 @@
  */
 package client;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
@@ -112,7 +116,7 @@ public class NoeudClient {
   public void ajouterNoeudConfiance(String adresse) {
     try {
       Registry registry = LocateRegistry.getRegistry();
-      
+
       Duplication duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");
       System.out.println("rmi://" + adresse + "/NoeudServeur");
       NoeudConfiance noeudConfiance = new NoeudConfiance(adresse, duplication);
@@ -149,7 +153,48 @@ public class NoeudClient {
 
   }
 
-  public void dupliquerFichier(BufferedReader donnees, String adresse) {
+  /**
+   * Cette méthode est le traitement principal du projet, il permet la duplication
+   * de fichiers sur des noeuds de confiance. Cette duplication se peut s'effectuer que
+   * sous certaines conditions:
+   *
+   * - les degrés de confidentialité des fichiers à dupliquer doivent être compatibles
+   *   avec les degrés de confiance des noeuds
+   *
+   * - un noeud de confiance peuvent être soumis à un traitement particulier pour
+   *   certains fichiers. Dans ce cas précis, son degré de confiance n'est pas
+   *   pris en compte pour la détermination du droit de duplication pour ces fichiers
+   *   en question.
+   *
+   * - si le degré de confidentialité du fichier est 4 (non duplicable), il ne pourra
+   *   de toute façon pas être dupliqué, il n'y aura donc pas de traitements à effectuer
+   *   pour ceux-ci
+   * 
+   */
+  public void dupliquerFichier() {
+    for (Fichier fichier : listeFichiers) {
+      if (fichier.getNiveauConfidentialite() != 4) {
+        for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
+          try {
+            if (fichier.getNoeudsConfianceMap().containsKey(noeudConfiance.getAdresse())) {
+              if (fichier.getNoeudsConfianceMap().get(noeudConfiance.getAdresse())) {
+                Duplication duplication = noeudConfiance.getDuplication();
+                File file = new File(fichier.getNom());
+                duplication.ecrireFichier(adresse, file, fichier.getNom());
+              }
+            } else {
+              if (noeudConfiance.getNiveauConfiance() >= fichier.getNiveauConfidentialite()) {
+                Duplication duplication = noeudConfiance.getDuplication();
+                File file = new File(fichier.getNom());
+                duplication.ecrireFichier(adresse, file, fichier.getNom());
+              }
+            }
+          } catch (RemoteException re) {
+            re.printStackTrace();
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -170,7 +215,7 @@ public class NoeudClient {
     }
   }
 
-   /**
+  /**
    * L'objectif de cette méthode est d'ajouter un noeud à la liste des noeuds
    * de confiance spécifique pour un fichier.
    *
@@ -182,7 +227,7 @@ public class NoeudClient {
    *        Accepter la duplication du fichier sur le noeud de confiance
    *
    */
-public void ajouterNoeudConfianceFichier(String nomFichier, String adresse, boolean mode) {
+  public void ajouterNoeudConfianceFichier(String nomFichier, String adresse, boolean mode) {
 
     for (Fichier fichier : listeFichiers) {
       if (fichier.getNom().equals(nomFichier)) {
@@ -225,7 +270,7 @@ public void ajouterNoeudConfianceFichier(String nomFichier, String adresse, bool
 
     boolean trouve = false;
     for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
-      
+
       try {
         List<String> listeFichiersServeur = noeudConfiance.getDuplication().getListeNomsFichiers();
 
@@ -234,13 +279,13 @@ public void ajouterNoeudConfianceFichier(String nomFichier, String adresse, bool
           System.out.println(nomFichier);
           if (nomFichier.length() > adresse.length()
                   && nomFichier.substring(0, adresse.length()).equals(adresse)) {
-            
+
             for (Fichier fichier : listeFichiers) {
               System.out.println("nomFichier : " + fichier.getNom());
-                System.out.println("nomFichierClient : " + nomFichier.substring(adresse.length() + 1, nomFichier.length()));
-                System.out.println("");
+              System.out.println("nomFichierClient : " + nomFichier.substring(adresse.length() + 1, nomFichier.length()));
+              System.out.println("");
               if (fichier.getNom().equals(nomFichier.substring(adresse.length() + 1, nomFichier.length()))) {
-                
+
                 trouve = true;
                 break;
               }
@@ -256,7 +301,6 @@ public void ajouterNoeudConfianceFichier(String nomFichier, String adresse, bool
       }
     }
   }
-
 
   public void recupererFichiersPerdus() {
   }

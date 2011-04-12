@@ -58,7 +58,7 @@ public class NoeudServeur implements Duplication {
    *         Le nom du fichier dont on souhaite écrire le contenu
    *
    */
-  public void ecrireFichier(String adresse, BufferedReader donnees, String nomFichier) {
+  public void ecrireFichier(String adresse, File fichier, String nomFichier) {
     boolean FichierCreer = false;
     String ligne;
     File file = new File(adresse + "_" + nomFichier);
@@ -66,18 +66,18 @@ public class NoeudServeur implements Duplication {
     try {
       FichierCreer = file.createNewFile();
       FileWriter fw = new FileWriter(file, true);
+      BufferedReader br = new BufferedReader(new FileReader(fichier));
       BufferedWriter bw = new BufferedWriter(fw);
 
-      while ((ligne = donnees.readLine()) != null) {
+      while ((ligne = br.readLine()) != null) {
         bw.write(ligne);
         bw.flush();
-
-
       }
       bw.close();
 
-    }
-    catch (IOException ex) {
+      listeNomsFichiers.add(adresse + "_" + nomFichier);
+      System.out.println("Fichier '" + adresse + "_" + nomFichier + "' ajouté.");
+    } catch (IOException ex) {
       Logger.getLogger(NoeudServeur.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
@@ -92,6 +92,8 @@ public class NoeudServeur implements Duplication {
   public void supprimerFichier(String nomFichier) {
     File file = new File(nomFichier);
     file.delete();
+    listeNomsFichiers.remove(nomFichier);
+    System.out.println("Fichier '" + nomFichier + "' supprimé.");
   }
 
   /**
@@ -111,8 +113,7 @@ public class NoeudServeur implements Duplication {
     FileReader fr;
     try {
       fr = new FileReader(nomFichier);
-    }
-    catch (FileNotFoundException fnfe) {
+    } catch (FileNotFoundException fnfe) {
       System.out.println("Erreur lors de l'ouverture du fichier " + nomFichier);
       fnfe.printStackTrace();
       fr = null;

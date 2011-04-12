@@ -5,6 +5,7 @@
 package serveur;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -36,11 +37,11 @@ public class NoeudServeurTest {
 
   @Test
   public void testEcrireFichier() {
-    BufferedReader donnees;
+    File fichier;
 
     try {
-      donnees = new BufferedReader(new FileReader("FichierTest.txt"));
-      noeudServeur.ecrireFichier("10.50.56.10", donnees, "FichierTest.txt");
+      fichier = new File("FichierTest.txt");
+      noeudServeur.ecrireFichier("10.50.56.10", fichier, "FichierTest.txt");
       Assert.assertNotNull(new FileReader("10.50.56.10_FichierTest.txt"));
     } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();

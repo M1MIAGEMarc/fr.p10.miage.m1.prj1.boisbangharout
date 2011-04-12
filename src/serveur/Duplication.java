@@ -6,6 +6,7 @@
 package serveur;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -19,7 +20,7 @@ public interface Duplication extends Remote{
 
   public List<String> getListeNomsFichiers() throws RemoteException;
 
-  public void ecrireFichier(String adresse, BufferedReader donnees, String nomFichier) throws RemoteException;
+  public void ecrireFichier(String adresse, File fichier, String nomFichier) throws RemoteException;
 
   public void supprimerFichier(String nomFichier) throws RemoteException;
 
