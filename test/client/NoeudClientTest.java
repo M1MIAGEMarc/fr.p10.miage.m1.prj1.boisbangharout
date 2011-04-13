@@ -5,6 +5,7 @@ package client;
  * and open the template in the editor.
  */
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -136,33 +137,34 @@ public class NoeudClientTest {
 
   @Test
   public void testDupliquerFichier() {
+    
     try {
       FileReader fileReader = null;
       List<Fichier> listeFichiers = noeudClient.getListeFichiers();
-      Fichier fichier = new Fichier("Fic3.txt");
+      Fichier fichier = new Fichier("Fic1.txt");
       fichier.setNiveauConfidentialite(1);
       listeFichiers.add(fichier);
       String adresse = noeudClient.getAdresse();
+      
       try {
         fileReader = new FileReader(listeFichiers.get(0).getNom());
         BufferedReader br = new BufferedReader(fileReader);
-
+        
         Registry registry = LocateRegistry.getRegistry();
         Duplication duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");
         NoeudConfiance noeud = new NoeudConfiance(adresse, duplication);
+        
         noeud.setNiveauConfiance(1);
         noeudClient.getListeNoeudsConfiance().add(noeud);
         noeudClient.dupliquerFichier();
-        for (NoeudConfiance noeudConfiance : noeudClient.getListeNoeudsConfiance()) {
-          System.out.println("testDupliquerFichier");
-          
+
+        for (NoeudConfiance noeudConfiance : noeudClient.getListeNoeudsConfiance()) {  
           Assert.assertNotNull(new FileReader(adresse + "_" + listeFichiers.get(0).getNom()));
           List<String> listeNomFichiers = duplication.getListeNomsFichiers();
 
           if (noeudConfiance.getNiveauConfiance() >= listeFichiers.get(0).getNiveauConfidentialite()) {
             Assert.assertTrue(listeNomFichiers.contains(adresse + "_" + listeFichiers.get(0).getNom()));
           }
-
         }
       } catch (FileNotFoundException fnfe) {
         fnfe.printStackTrace();
@@ -333,14 +335,14 @@ public class NoeudClientTest {
 
   @Test
   public void testEcrireFichierPerdu() {
+    String dossierFichiersTest = "Fichiers_Test\\testEcrireFichierPerdu()\\";
     BufferedReader br1;
     try {
       String nomFichier = "Fic3.txt";
-      br1 = new BufferedReader(new FileReader(nomFichier));
-      noeudClient.ecrireFichierPerdu("(2)-" + nomFichier, br1);
+      File fichier = new File(dossierFichiersTest + nomFichier);
+      noeudClient.ecrireFichierPerdu(dossierFichiersTest + "(2)-" + nomFichier, fichier);
       // Le "(2)-" sert simplement à différencier les fichiers en sortie pour les tests
       FileReader fileReader = new FileReader("(2)-" + nomFichier);
-      br1.close();
     } catch (FileNotFoundException ex) {
       ex.printStackTrace();
       Assert.fail();

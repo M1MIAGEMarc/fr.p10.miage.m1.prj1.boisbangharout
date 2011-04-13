@@ -24,6 +24,6 @@ public interface Duplication extends Remote{
 
   public void supprimerFichier(String nomFichier) throws RemoteException;
 
-  public BufferedReader extraireDonnees(String nomFichier) throws RemoteException;
+  public File extraireDonnees(String nomFichier) throws RemoteException;
 
 }

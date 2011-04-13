@@ -312,29 +312,30 @@ public class NoeudClient {
    * @param nomFichier
    *        Le nom du fichier à créer sur la machine cliente
    *
-   * @param donnees
-   *        Les
+   * @param fichier
+   *        Le fichier à ecrire sur la machine cliente
    */
-  public void ecrireFichierPerdu(String nomFichier, BufferedReader donnees) {
+  public void ecrireFichierPerdu(String nomFichier, File fichier) {
 
     String ligne;
     File file = new File(nomFichier);
-
+    //On supprime le fichier s'il existe déjà pour l'écrire ensuite (cela évite d'écrire plusieurs fois les même données dans le fichier)
+    file.delete(); 
     try {
+      
       file.createNewFile();
       FileWriter fw = new FileWriter(file, true);
       BufferedWriter bw = new BufferedWriter(fw);
+      BufferedReader donnees = new BufferedReader(new FileReader(fichier));
 
       while ((ligne = donnees.readLine()) != null) {
         bw.write(ligne);
         bw.flush();
-
-
       }
       bw.close();
 
-    } catch (IOException ex) {
-      Logger.getLogger(NoeudServeur.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
     }
   }
 }

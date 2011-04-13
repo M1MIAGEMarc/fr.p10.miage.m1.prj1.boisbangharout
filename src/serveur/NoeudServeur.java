@@ -38,6 +38,7 @@ public class NoeudServeur implements Duplication {
     }
   }
 
+  @Override
   public List<String> getListeNomsFichiers() {
     return listeNomsFichiers;
   }
@@ -51,18 +52,19 @@ public class NoeudServeur implements Duplication {
    * @param  adresse
    *         L'adresse de provenance du fichier
    *
-   * @param  donnees
-   *         Le contenu du fichier
+   * @param  fichier
+   *         Le fichier à dupliquer
    *
    * @param  nomFichier
    *         Le nom du fichier dont on souhaite écrire le contenu
    *
    */
+  @Override
   public void ecrireFichier(String adresse, File fichier, String nomFichier) {
     boolean FichierCreer = false;
     String ligne;
     File file = new File(adresse + "_" + nomFichier);
-
+    file.delete();
     try {
       FichierCreer = file.createNewFile();
       FileWriter fw = new FileWriter(file, true);
@@ -89,6 +91,7 @@ public class NoeudServeur implements Duplication {
    * @param nomFichier
    *        Le nom du fichier à supprimer
    */
+  @Override
   public void supprimerFichier(String nomFichier) {
     File file = new File(nomFichier);
     file.delete();
@@ -109,15 +112,11 @@ public class NoeudServeur implements Duplication {
    * @return Les données extraites du fichier dont le nom est passé
    *         en paramètre
    */
-  public BufferedReader extraireDonnees(String nomFichier) {
-    FileReader fr;
-    try {
-      fr = new FileReader(nomFichier);
-    } catch (FileNotFoundException fnfe) {
-      System.out.println("Erreur lors de l'ouverture du fichier " + nomFichier);
-      fnfe.printStackTrace();
-      fr = null;
-    }
-    return new BufferedReader(fr);
+  @Override
+  public File extraireDonnees(String nomFichier) {
+    File fichier;
+    fichier = new File(nomFichier);
+    
+    return fichier;
   }
 }
