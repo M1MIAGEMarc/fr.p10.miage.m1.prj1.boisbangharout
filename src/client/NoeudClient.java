@@ -302,7 +302,33 @@ public class NoeudClient {
     }
   }
 
-  public void recupererFichiersPerdus() {
+ public void recupererFichiersPerdus()  {
+
+    boolean trouve = false;
+    for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
+
+      try {
+        List<String> listeFichiersServeur = noeudConfiance.getDuplication().getListeNomsFichiers();
+
+        for (String nomFichier : listeFichiersServeur) {
+          trouve = false;
+          System.out.println(nomFichier);
+
+
+            for (Fichier fichier : listeFichiers) {
+              System.out.println("nomFichier : " + fichier.getNom());
+              ecrireFichierPerdu(nomFichier,noeudConfiance.getDuplication().extraireDonnees(nomFichier));
+
+
+            }
+
+
+
+        }
+      } catch (RemoteException re) {
+        re.printStackTrace();
+      }
+    }
   }
 
   /**
