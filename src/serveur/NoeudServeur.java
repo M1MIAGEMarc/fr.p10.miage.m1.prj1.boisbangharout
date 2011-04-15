@@ -77,7 +77,8 @@ public class NoeudServeur implements Duplication {
       }
       bw.close();
 
-      listeNomsFichiers.add(adresse + "_" + nomFichier);
+      if(!listeNomsFichiers.contains(adresse + "_" + nomFichier));
+        listeNomsFichiers.add(adresse + "_" + nomFichier);
       System.out.println("Fichier '" + adresse + "_" + nomFichier + "' ajouté.");
     } catch (IOException ex) {
       Logger.getLogger(NoeudServeur.class.getName()).log(Level.SEVERE, null, ex);
@@ -93,6 +94,7 @@ public class NoeudServeur implements Duplication {
    */
   @Override
   public void supprimerFichier(String nomFichier) {
+    System.out.println("SUPPRESSION FICHIER");
     File file = new File(nomFichier);
     file.delete();
     listeNomsFichiers.remove(nomFichier);

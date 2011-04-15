@@ -18,7 +18,7 @@ import serveur.NoeudServeurTest;
  * @author Kamel Gharout
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({NoeudClientTest.class, NoeudServeurTest.class})
+@Suite.SuiteClasses({NoeudServeurTest.class, NoeudClientTest.class})
 public class Tests {
 
   @BeforeClass

@@ -12,12 +12,15 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import junit.framework.Assert;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -253,6 +256,42 @@ public class NoeudClientTest {
   }
 
   @Test
+  public void testRecupererFichiersPerdus() {
+    try {
+      String nomFichier, adresse;
+      BufferedReader br1;
+      InetAddress Ip = InetAddress.getLocalHost();
+      adresse = Ip.getHostAddress();
+      nomFichier = "Fic11.txt";
+      List<Fichier> listeFichiers = noeudClient.getListeFichiers();
+      listeFichiers.add(new Fichier("Fic1.txt"));
+      listeFichiers.add(new Fichier("Fic2.txt"));
+
+      Duplication duplication;
+      List<NoeudConfiance> listeNoeudsConfiance = noeudClient.getListeNoeudsConfiance();
+      Registry registry = LocateRegistry.getRegistry();
+      duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");
+      listeNoeudsConfiance.add(new NoeudConfiance(adresse, duplication));
+      noeudClient.recupererFichiersPerdus();
+      Assert.assertNotNull(new FileReader(nomFichier));
+      System.out.println(adresse + "_" + nomFichier);
+    } catch (NotBoundException ex) {
+      Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (AccessException ex) {
+      Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (RemoteException ex) {
+      Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (UnknownHostException uhe) {
+      uhe.printStackTrace();
+      Assert.fail();
+    } catch (FileNotFoundException fnfe) {
+      fnfe.printStackTrace();
+      Assert.fail();
+    }
+
+  }
+    
+  @Test
   public void testNettoyerFichiersDupliques() {
 
     try {
@@ -269,7 +308,6 @@ public class NoeudClientTest {
       //listeFichiers.add(new Fichier("Fic0.txt"));
       listeFichiers.add(new Fichier("Fic1.txt"));
       listeFichiers.add(new Fichier("Fic2.txt"));
-      //listeFichiers.add(new Fichier("Fic3.txt"));
       List<String> fichiersSauves = new ArrayList<String>();
 
       for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
@@ -312,25 +350,6 @@ public class NoeudClientTest {
       e.printStackTrace();
       Assert.fail();
     }
-  }
-
-  @Test
-  public void testRecupererFichiersPerdus() {
-    try {
-      String nomFichier, adresse;
-      BufferedReader br1;
-      InetAddress Ip = InetAddress.getLocalHost();
-      adresse = Ip.getHostAddress();
-      nomFichier = "Fic10.txt";
-      noeudClient.recupererFichiersPerdus();
-      Assert.assertNotNull(new FileReader(adresse + "_" + nomFichier));
-            System.out.println(adresse + "_" + nomFichier);
-    } catch (UnknownHostException ex) {
-      Assert.fail();
-    } catch (FileNotFoundException fnfe) {
-      Assert.fail();
-    }
-
   }
 
   @Test

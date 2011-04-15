@@ -268,24 +268,22 @@ public class NoeudClient {
    */
   public void nettoyerFichiersDupliques() {
 
-    boolean trouve = false;
+    boolean trouve;
     for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
 
       try {
         List<String> listeFichiersServeur = noeudConfiance.getDuplication().getListeNomsFichiers();
 
         for (String nomFichier : listeFichiersServeur) {
-          trouve = false;
           System.out.println(nomFichier);
+          trouve = false;
           if (nomFichier.length() > adresse.length()
                   && nomFichier.substring(0, adresse.length()).equals(adresse)) {
 
             for (Fichier fichier : listeFichiers) {
-              System.out.println("nomFichier : " + fichier.getNom());
-              System.out.println("nomFichierClient : " + nomFichier.substring(adresse.length() + 1, nomFichier.length()));
-              System.out.println("");
+              System.out.println(fichier.getNom() + " | " + nomFichier.substring(adresse.length() + 1, nomFichier.length()));
               if (fichier.getNom().equals(nomFichier.substring(adresse.length() + 1, nomFichier.length()))) {
-
+                System.out.println("TROUVE !");
                 trouve = true;
                 break;
               }
@@ -302,7 +300,10 @@ public class NoeudClient {
     }
   }
 
- public void recupererFichiersPerdus()  {
+  /**
+   * 
+   */
+  public void recupererFichiersPerdus() {
 
     boolean trouve = false;
     for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
@@ -312,18 +313,21 @@ public class NoeudClient {
 
         for (String nomFichier : listeFichiersServeur) {
           trouve = false;
-          System.out.println(nomFichier);
-
-
+          if (nomFichier.length() > adresse.length()
+                  && nomFichier.substring(0, adresse.length()).equals(adresse)) {
+            String nouveauNomFichier = "";
             for (Fichier fichier : listeFichiers) {
-              System.out.println("nomFichier : " + fichier.getNom());
-              ecrireFichierPerdu(nomFichier,noeudConfiance.getDuplication().extraireDonnees(nomFichier));
-
-
+              nouveauNomFichier = nomFichier.substring(adresse.length() + 1, nomFichier.length());
+              if (fichier.getNom().equals(nouveauNomFichier)) {
+                trouve = true;
+                break;
+              }
             }
-
-
-
+            
+            if (!trouve) {
+              ecrireFichierPerdu(nouveauNomFichier, noeudConfiance.getDuplication().extraireDonnees(nomFichier));
+            }
+          }
         }
       } catch (RemoteException re) {
         re.printStackTrace();
@@ -346,9 +350,9 @@ public class NoeudClient {
     String ligne;
     File file = new File(nomFichier);
     //On supprime le fichier s'il existe déjà pour l'écrire ensuite (cela évite d'écrire plusieurs fois les même données dans le fichier)
-    file.delete(); 
+    file.delete();
     try {
-      
+
       file.createNewFile();
       FileWriter fw = new FileWriter(file, true);
       BufferedWriter bw = new BufferedWriter(fw);

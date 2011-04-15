@@ -32,7 +32,7 @@ public class MainServeur {
       Registry registry = LocateRegistry.createRegistry(1099);
       registry.rebind("rmi://" + adresse + "/NoeudServeur", duplicationStub);
       System.out.println("Noeud serveur opérationnel.");
-      Thread.sleep(10);
+      Thread.sleep(300);
     } catch (AccessException ex) {
       ex.printStackTrace();
     } catch (RemoteException ex) {
