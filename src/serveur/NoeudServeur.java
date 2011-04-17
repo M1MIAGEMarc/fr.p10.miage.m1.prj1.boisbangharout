@@ -7,10 +7,11 @@ package serveur;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,11 +22,11 @@ import java.util.logging.Logger;
  * @author Marc Boisban
  * @author Kamel Gharout
  */
-public class NoeudServeur implements Duplication {
+public class NoeudServeur extends UnicastRemoteObject implements Duplication {
 
   private List<String> listeNomsFichiers;
 
-  public NoeudServeur() {
+  public NoeudServeur() throws RemoteException{
     listeNomsFichiers = new ArrayList<String>();
     File file = new File(".");
     File[] files = file.listFiles();
@@ -36,6 +37,7 @@ public class NoeudServeur implements Duplication {
         listeNomsFichiers.add(files[i].getName());
       }
     }
+
   }
 
   @Override

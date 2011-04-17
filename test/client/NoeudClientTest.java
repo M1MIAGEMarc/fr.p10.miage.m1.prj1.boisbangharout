@@ -11,8 +11,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.AccessException;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -85,8 +87,9 @@ public class NoeudClientTest {
     String adresse;
     List<NoeudConfiance> listeNoeudsConfiance = noeudClient.getListeNoeudsConfiance();
     try {
-      InetAddress adress = Inet4Address.getLocalHost();
-      adresse = adress.getHostAddress();
+      /*InetAddress adress = Inet4Address.getLocalHost();
+      adresse = adress.getHostAddress();*/
+      adresse = "192.168.19.3";
       noeudClient.ajouterNoeudConfiance(adresse);
       Assert.assertEquals(adresse, listeNoeudsConfiance.get(0).getAdresse());
       /*
@@ -107,9 +110,8 @@ public class NoeudClientTest {
       Assert.assertEquals(adresse, listeNoeudsConfiance.get(3).getAdresse());
        */
     } catch (IndexOutOfBoundsException e) {
-      e.printStackTrace();
+      System.out.println(e.getMessage());
       Assert.fail();
-    } catch (UnknownHostException uhe) {
     }
   }
 
@@ -147,14 +149,17 @@ public class NoeudClientTest {
       Fichier fichier = new Fichier("Fic1.txt");
       fichier.setNiveauConfidentialite(1);
       listeFichiers.add(fichier);
-      String adresse = noeudClient.getAdresse();
+      //String adresse = noeudClient.getAdresse();
+      String adresse = "192.168.19.3";
       
       try {
         fileReader = new FileReader(listeFichiers.get(0).getNom());
         BufferedReader br = new BufferedReader(fileReader);
-        
+
+        /*
         Registry registry = LocateRegistry.getRegistry();
-        Duplication duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");
+        Duplication duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");*/
+        Duplication duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/NoeudServeur");
         NoeudConfiance noeud = new NoeudConfiance(adresse, duplication);
         
         noeud.setNiveauConfiance(1);
@@ -169,6 +174,8 @@ public class NoeudClientTest {
             Assert.assertTrue(listeNomFichiers.contains(adresse + "_" + listeFichiers.get(0).getNom()));
           }
         }
+      } catch (MalformedURLException ex) {
+        Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
       } catch (FileNotFoundException fnfe) {
         fnfe.printStackTrace();
         Assert.fail();
@@ -255,35 +262,40 @@ public class NoeudClientTest {
     }
   }
 
-  @Test
+
   public void testRecupererFichiersPerdus() {
     try {
       String nomFichier, adresse;
       BufferedReader br1;
+      /*
       InetAddress Ip = InetAddress.getLocalHost();
       adresse = Ip.getHostAddress();
+       */
+      adresse = "192.168.19.3";
       nomFichier = "Fic11.txt";
       List<Fichier> listeFichiers = noeudClient.getListeFichiers();
       listeFichiers.add(new Fichier("Fic1.txt"));
-      listeFichiers.add(new Fichier("Fic2.txt"));
+      listeFichiers.add(new Fichier("Fic3.txt"));
 
       Duplication duplication;
       List<NoeudConfiance> listeNoeudsConfiance = noeudClient.getListeNoeudsConfiance();
+      /*
       Registry registry = LocateRegistry.getRegistry();
       duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");
+       */
+      duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/NoeudServeur");
       listeNoeudsConfiance.add(new NoeudConfiance(adresse, duplication));
       noeudClient.recupererFichiersPerdus();
       Assert.assertNotNull(new FileReader(nomFichier));
       System.out.println(adresse + "_" + nomFichier);
+    } catch (MalformedURLException ex) {
+      Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NotBoundException ex) {
       Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
     } catch (AccessException ex) {
       Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
     } catch (RemoteException ex) {
       Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (UnknownHostException uhe) {
-      uhe.printStackTrace();
-      Assert.fail();
     } catch (FileNotFoundException fnfe) {
       fnfe.printStackTrace();
       Assert.fail();
@@ -299,20 +311,23 @@ public class NoeudClientTest {
       Duplication duplication;
       FileReader fileReader = null;
       String adresse = noeudClient.getAdresse();
+      String adresseDistante = "192.168.19.3";
       List<Fichier> listeFichiers = noeudClient.getListeFichiers();
       List<NoeudConfiance> listeNoeudsConfiance = noeudClient.getListeNoeudsConfiance();
 
-      Registry registry = LocateRegistry.getRegistry();
+      /*Registry registry = LocateRegistry.getRegistry();
       duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");
-      listeNoeudsConfiance.add(new NoeudConfiance(adresse, duplication));
+       */
+      duplication = (Duplication) Naming.lookup("rmi://" + adresseDistante + "/NoeudServeur");
+      listeNoeudsConfiance.add(new NoeudConfiance(adresseDistante, duplication));
       //listeFichiers.add(new Fichier("Fic0.txt"));
       listeFichiers.add(new Fichier("Fic1.txt"));
-      listeFichiers.add(new Fichier("Fic2.txt"));
+      listeFichiers.add(new Fichier("Fic4.txt"));
       List<String> fichiersSauves = new ArrayList<String>();
 
       for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
         duplication = noeudConfiance.getDuplication();
-        System.out.println(adresse + "_" + listeFichiers.get(0).getNom());
+        System.out.println(adresseDistante + "_" + listeFichiers.get(0).getNom());
         //Assert.assertNotNull(new FileReader(adresse + "_" + listeFichiers.get(0).getNom()));
         List<String> listeNomFichiers = duplication.getListeNomsFichiers();
         for (String nomFichier : listeNomFichiers) {
@@ -320,7 +335,8 @@ public class NoeudClientTest {
           if (nomFichier.contains("_") 
               && nomFichier.substring(0, indexSeparateur).equals(adresse)
               && !nomFichier.substring(adresse.length() + 1, nomFichier.length()).equals("Fic1.txt")
-              && !nomFichier.substring(adresse.length() + 1, nomFichier.length()).equals("Fic2.txt")) {
+              && !nomFichier.substring(adresse.length() + 1, nomFichier.length()).equals("Fic4.txt")) {
+            System.out.println("nomfichier" + nomFichier);
             fichiersSauves.add(nomFichier);
           }
         }
@@ -330,14 +346,17 @@ public class NoeudClientTest {
 
       for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
         duplication = noeudConfiance.getDuplication();
-        Assert.assertNotNull(new FileReader(adresse + "_" + listeFichiers.get(0).getNom()));
+        Assert.assertNotNull(new FileReader(adresseDistante + "_" + listeFichiers.get(0).getNom()));
         List<String> listeNomFichiers = duplication.getListeNomsFichiers();
         for (String fichierSauve : fichiersSauves) {
+          System.out.println("fichierSauve" + fichierSauve);
           Assert.assertFalse(listeNomFichiers.contains(fichierSauve));
         }
         listeNomFichiers.contains("");
       }
 
+    } catch (MalformedURLException ex) {
+      Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NotBoundException nbe) {
       nbe.printStackTrace();
       Assert.fail();

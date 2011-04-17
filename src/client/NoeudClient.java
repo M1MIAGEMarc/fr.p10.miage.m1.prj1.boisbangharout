@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -114,10 +115,12 @@ public class NoeudClient {
    *        L'adresse du noeud de confiance que l'on souhaite ajouter
    */
   public void ajouterNoeudConfiance(String adresse) {
-    try {
-      Registry registry = LocateRegistry.getRegistry();
 
-      Duplication duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");
+    try {
+      //Registry registry = LocateRegistry.getRegistry(adresse);
+      //Duplication duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");
+      Duplication duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/NoeudServeur");
+      System.out.println("ajouterNoeudConfiance (après lookup)");
       System.out.println("rmi://" + adresse + "/NoeudServeur");
       NoeudConfiance noeudConfiance = new NoeudConfiance(adresse, duplication);
       listeNoeudsConfiance.add(noeudConfiance);
@@ -179,14 +182,18 @@ public class NoeudClient {
             if (fichier.getNoeudsConfianceMap().containsKey(noeudConfiance.getAdresse())) {
               if (fichier.getNoeudsConfianceMap().get(noeudConfiance.getAdresse())) {
                 Duplication duplication = noeudConfiance.getDuplication();
-                File file = new File(fichier.getNom());
-                duplication.ecrireFichier(adresse, file, fichier.getNom());
+                if (!duplication.getListeNomsFichiers().contains(adresse + "_" + fichier.getNom())) {
+                  File file = new File(fichier.getNom());
+                  duplication.ecrireFichier(adresse, file, fichier.getNom());
+                }
               }
             } else {
               if (noeudConfiance.getNiveauConfiance() >= fichier.getNiveauConfidentialite()) {
                 Duplication duplication = noeudConfiance.getDuplication();
-                File file = new File(fichier.getNom());
-                duplication.ecrireFichier(adresse, file, fichier.getNom());
+                if (!duplication.getListeNomsFichiers().contains(adresse + "_" + fichier.getNom())) {
+                  File file = new File(fichier.getNom());
+                  duplication.ecrireFichier(adresse, file, fichier.getNom());
+                }
               }
             }
           } catch (RemoteException re) {
@@ -323,7 +330,7 @@ public class NoeudClient {
                 break;
               }
             }
-            
+
             if (!trouve) {
               ecrireFichierPerdu(nouveauNomFichier, noeudConfiance.getDuplication().extraireDonnees(nomFichier));
             }
