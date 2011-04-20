@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package IHM;
+package client;
 
 import client.Fichier;
 import client.NoeudClient;

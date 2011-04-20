@@ -4,39 +4,44 @@
  */
 package client;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import serveur.Duplication;
-import serveur.NoeudServeur;
+
 
 /**
+ * Cette classe a pour but de modéliser la machine cliente
  *
  * @author Marc Boisban
  * @author Kamel Gharout
  */
 public class NoeudClient {
 
+
+  /****************************   Attributs   *********************************/
   private String adresse;
   private List<Fichier> listeFichiers;
   private List<NoeudConfiance> listeNoeudsConfiance;
 
+
+
+  /****************************   Constructeur(s)   ***************************/
+  
+  /*
+   * Initialise un noeud client avec sa propre adresse comme attribut "adresse"
+   */
   public NoeudClient() {
     try {
       InetAddress Ip = InetAddress.getLocalHost();
@@ -48,35 +53,77 @@ public class NoeudClient {
     }
   }
 
+  /*
   public NoeudClient(String adresse, List<Fichier> listeFichiers, List<NoeudConfiance> listeNoeudsConfiance) {
     this.adresse = adresse;
     this.listeFichiers = listeFichiers;
     this.listeNoeudsConfiance = listeNoeudsConfiance;
-  }
+  }*/
 
+
+
+  /****************************   Accesseurs   ********************************/
+
+  /**
+   * Renvoie l'adresse du noeud client
+   * 
+   * @return l'adresse du noeud client
+   */
   public String getAdresse() {
     return adresse;
   }
 
+  /**
+   * Affecte à l'attribut adresse la valeur passée en paramètre
+   * 
+   * @param adresse
+   *        la nouvelle valeur de l'adresse
+   */
   public void setAdresse(String adresse) {
     this.adresse = adresse;
   }
 
+  /**
+   * Renvoie la liste des fichiers du noeud client
+   *
+   * @return la liste des fichiers du noeud client
+   */
   public List<Fichier> getListeFichiers() {
     return listeFichiers;
   }
 
+  /**
+   * Affecte à l'attribut listeFichiers la liste passée en paramètre
+   *
+   * @param listeFichiers
+   *        la nouvelle valeur de l'attribut listeFichiers
+   */
   public void setListeFichiers(List<Fichier> listeFichiers) {
     this.listeFichiers = listeFichiers;
   }
 
+  /**
+   * Renvoie la liste des noeuds de confiance du noeud client
+   *
+   * @return la liste des noeuds de confiance du noeud client
+   */
   public List<NoeudConfiance> getListeNoeudsConfiance() {
     return listeNoeudsConfiance;
   }
 
+  /**
+   * Affecte à l'attribut listeFichiers la liste passée en paramètre
+   *
+   * @param listeNoeudsConfiance
+   *        la nouvelle valeur de l'attribut listeFichiers
+   */
   public void setListeNoeudsConfiance(List<NoeudConfiance> listeNoeudsConfiance) {
     this.listeNoeudsConfiance = listeNoeudsConfiance;
   }
+
+
+
+  /****************************   Autres méthodes   ***************************/
 
   /**
    * Permet d'affecter un degré de confidentialité à un fichier. Ce degré a pour but
@@ -84,11 +131,12 @@ public class NoeudClient {
    * être dupliqué.
    *
    * Il existe 4 degrés de confidentialité :
-   * - 1 : Peu confidentiel
-   * - 2 : Moyennent confidentiel
-   * - 3 : Très confidentiel
-   * - 4 : Non duplicable (affecté par défaut lors de la création d'un objet Fichier)
-   *
+   * <ul>
+   * <li> 1 : Peu confidentiel</li>
+   * <li> 2 : Moyennent confidentiel</li>
+   * <li> 3 : Très confidentiel</li>
+   * <li> 4 : Non duplicable (affecté par défaut lors de la création d'un objet Fichier)</li>
+   * </ul>
    * @param nomFichier
    *        Le nom du fichier auquel on souhaite affecter un degré de confidentialité
    *
@@ -135,10 +183,11 @@ public class NoeudClient {
    * être dupliqués sur ce noeud.
    *
    * Il existe 3 degrés de confiance :
-   * - 1 : Peu sûr
-   * - 2 : Moyennent sûr
-   * - 3 : Très sûr
-   *
+   * <ul>
+   * <li> 1 : Peu sûr </li>
+   * <li> 2 : Moyennent sûr </li>
+   * <li> 3 : Très sûr </li>
+   * </ul>
    * @param adresse
    *        L'adresse du noeud auquel on souhaite affecter un degré de confiance
    *
@@ -161,18 +210,19 @@ public class NoeudClient {
    * de fichiers sur des noeuds de confiance. Cette duplication se peut s'effectuer que
    * sous certaines conditions:
    *
-   * - les degrés de confidentialité des fichiers à dupliquer doivent être compatibles
-   *   avec les degrés de confiance des noeuds
+   * <ul>
+   * <li> les degrés de confidentialité des fichiers à dupliquer doivent être compatibles
+   *   avec les degrés de confiance des noeuds </li>
    *
-   * - un noeud de confiance peuvent être soumis à un traitement particulier pour
+   * <li> un noeud de confiance peuvent être soumis à un traitement particulier pour
    *   certains fichiers. Dans ce cas précis, son degré de confiance n'est pas
    *   pris en compte pour la détermination du droit de duplication pour ces fichiers
-   *   en question.
+   *   en question. </li>
    *
-   * - si le degré de confidentialité du fichier est 4 (non duplicable), il ne pourra
+   * <li> si le degré de confidentialité du fichier est 4 (non duplicable), il ne pourra
    *   de toute façon pas être dupliqué, il n'y aura donc pas de traitements à effectuer
-   *   pour ceux-ci
-   * 
+   *   pour ceux-ci </li>
+   * </ul>
    */
   public void dupliquerFichier() {
     for (Fichier fichier : listeFichiers) {
@@ -267,11 +317,11 @@ public class NoeudClient {
    * Permet de supprimer sur les noeuds de confiance les fichiers dupliqués par le client
    * courant et qui ne figurent plus sur sa propre machine.
    *
-   * Pour savoir si les fichiers du noeud de confiance sont des fichiers dupliqués par le
+   * <p>Pour savoir si les fichiers du noeud de confiance sont des fichiers dupliqués par le
    * noeud client, il suffit de vérifier que le nom du fichier commence par l'adresse de
-   * celui-ci.
+   * celui-ci.</p>
    *
-   * Exemple : 10.54.65.81_fic.txt (si l'adresse du noeud client est 10.54.65.81)
+   * <p>Exemple : 10.54.65.81_fic.txt (si l'adresse du noeud client est 10.54.65.81)</p>
    */
   public void nettoyerFichiersDupliques() {
 
@@ -282,15 +332,13 @@ public class NoeudClient {
         List<String> listeFichiersServeur = noeudConfiance.getDuplication().getListeNomsFichiers();
 
         for (String nomFichier : listeFichiersServeur) {
-          System.out.println(nomFichier);
+          //System.out.println(nomFichier);
           trouve = false;
           if (nomFichier.length() > adresse.length()
                   && nomFichier.substring(0, adresse.length()).equals(adresse)) {
 
             for (Fichier fichier : listeFichiers) {
-              System.out.println(fichier.getNom() + " | " + nomFichier.substring(adresse.length() + 1, nomFichier.length()));
               if (fichier.getNom().equals(nomFichier.substring(adresse.length() + 1, nomFichier.length()))) {
-                System.out.println("TROUVE !");
                 trouve = true;
                 break;
               }
@@ -308,7 +356,13 @@ public class NoeudClient {
   }
 
   /**
-   * 
+   * Permet de récupérer les fichiers dupliqués sur les noeuds de confiance par le client
+   * et qui ne figurent plus sur sa propre machine.
+   *
+   * <p>Pour savoir si les fichiers du noeud de confiance sont des fichiers dupliqués par le
+   * noeud client, le principe est le même que pour la méthode nettoyerFichiersDupliques()</p>
+   *
+   * <p>Exemple : 10.54.65.81_fic.txt (si l'adresse du noeud client est 10.54.65.81)</p>
    */
   public void recupererFichiersPerdus() {
 

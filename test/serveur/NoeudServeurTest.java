@@ -10,23 +10,34 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import junit.framework.Assert;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- *
- * @author maboisba
+ * Classe de tests pour la classe NoeudServeur
+ * 
+ * @author Marc Boisban
+ * @author Kamel Gharout
  */
 public class NoeudServeurTest {
 
+  
+  /****************************   Attributs   *********************************/
   private NoeudServeur noeudServeur;
 
-  public NoeudServeurTest() {
+
+
+  /****************************   Constructeur(s)   ***************************/
+  public NoeudServeurTest() throws RemoteException{
     noeudServeur = new NoeudServeur();
   }
 
+
+
+  /****************************   Méthodes automatiquement générées  **********/
   @BeforeClass
   public static void setUpClass() throws Exception {
   }
@@ -35,6 +46,9 @@ public class NoeudServeurTest {
   public static void tearDownClass() throws Exception {
   }
 
+
+  
+  /****************************   Méthodes de test  ***************************/
   @Test
   public void testEcrireFichier() {
     String dossierFichiersTest = "Fichiers_Test\\testEcrireFichier()\\";

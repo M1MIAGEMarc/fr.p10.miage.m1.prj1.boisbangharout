@@ -18,14 +18,26 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Il s'agit de la classe d'implémentation de l'interface Duplication
+ * 
  * @author Marc Boisban
  * @author Kamel Gharout
  */
 public class NoeudServeur extends UnicastRemoteObject implements Duplication {
 
+  /****************************   Attributs   *********************************/
   private List<String> listeNomsFichiers;
 
+
+
+  /****************************   Constructeur(s)   ***************************/
+
+  /**
+   * Initialise un noeud serveur en alimentant la liste des noms de fichiers
+   * à partir des fichiers contenu dans le racine du projet chez le noeud serveur
+   * 
+   * @throws RemoteException
+   */
   public NoeudServeur() throws RemoteException{
     listeNomsFichiers = new ArrayList<String>();
     File file = new File(".");
@@ -40,11 +52,23 @@ public class NoeudServeur extends UnicastRemoteObject implements Duplication {
 
   }
 
+
+  
+  /****************************   Accesseurs   ********************************/
+  /**
+   * Renvoie la liste des noms des fichiers du noeud serveur
+   * 
+   * @return la liste des noms des fichiers du noeud serveur
+   */
   @Override
   public List<String> getListeNomsFichiers() {
     return listeNomsFichiers;
   }
 
+
+
+  /****************************   Autres méthodes   ***************************/
+  
   /**
    * Permet d'écrire un fichier sur le noeud de confiance.
    * Cette méthode écrit le paramètre données dans un fichier
@@ -96,7 +120,6 @@ public class NoeudServeur extends UnicastRemoteObject implements Duplication {
    */
   @Override
   public void supprimerFichier(String nomFichier) {
-    System.out.println("SUPPRESSION FICHIER");
     File file = new File(nomFichier);
     file.delete();
     listeNomsFichiers.remove(nomFichier);

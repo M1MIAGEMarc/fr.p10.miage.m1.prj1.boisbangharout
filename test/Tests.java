@@ -13,6 +13,7 @@ import org.junit.runners.Suite;
 import serveur.NoeudServeurTest;
 
 /**
+ * Classe exécutant tous les tests unitaires du projet
  *
  * @author Marc Boisban
  * @author Kamel Gharout

@@ -9,16 +9,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.UnknownHostException;
 import java.rmi.AccessException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -30,17 +25,27 @@ import org.junit.Test;
 import serveur.Duplication;
 
 /**
+ * Classe de tests pour la classe NoeudClient
  *
- * @author maboisba
+ * @author Marc Boisban
+ * @author Kamel Gharout
  */
 public class NoeudClientTest {
 
+  
+  /****************************   Attributs   *********************************/
   private NoeudClient noeudClient;
 
+
+
+  /****************************   Constructeur(s)   ***************************/
   public NoeudClientTest() {
     noeudClient = new NoeudClient();
   }
 
+
+
+  /****************************   Méthodes automatiquement générées  **********/
   @BeforeClass
   public static void setUpClass() throws Exception {
   }
@@ -49,6 +54,9 @@ public class NoeudClientTest {
   public static void tearDownClass() throws Exception {
   }
 
+
+
+  /****************************   Méthodes de test  ***************************/
   @Test
   public void testAssignerConfidentialite() {
 

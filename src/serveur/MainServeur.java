@@ -11,11 +11,11 @@ import java.net.UnknownHostException;
 import java.rmi.AccessException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 
 /**
+ * Programme côté serveur.
+ * Cette classe se charge de lancer le serveur et d'attendre les requêtes
+ * des programmes clients.
  *
  * @author Marc Boisban
  * @author Kamel Gharout
@@ -23,17 +23,14 @@ import java.rmi.server.UnicastRemoteObject;
 public class MainServeur {
 
   /**
-   * @param args the command line arguments
+   * @param args
+   *        Les arguments de la ligne de commande
    */
   public static void main(String[] args) throws InterruptedException, MalformedURLException{
     try {
       InetAddress adress = Inet4Address.getLocalHost();
       String adresse = adress.getHostAddress();
       NoeudServeur noeudServeur = new NoeudServeur();
-      /*
-      Duplication duplicationStub = (Duplication) UnicastRemoteObject.exportObject(noeudServeur, 0);
-      Registry registry = LocateRegistry.createRegistry(1099);
-      registry.rebind("rmi://" + adresse + "/NoeudServeur", duplicationStub);*/
       Naming.rebind("rmi://" + adresse + "/NoeudServeur", noeudServeur);
       System.out.println("Noeud serveur opérationnel.");
       Thread.sleep(300);
