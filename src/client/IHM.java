@@ -117,16 +117,19 @@ public class IHM {
 
     public void assignerConfidentialite(){
         int taille;
+        int cpt = 1;
         int choix,choix2 = 0;
         do {
         System.out.println("Assigner un degré de confidentialité");
         System.out.println("====================================");
         listeFichiers = noeudClient.getListeFichiers();
-        taille = listeFichiers.size();
-        for (int i = 0; i < taille; i++) {
-            System.out.print(i+1);
-            System.out.println(". " + listeFichiers.get(i));
-            }
+        taille = listeFichiers.size() + 1;
+        for (Fichier fichier : listeFichiers) {
+            System.out.print(cpt + ". ");
+            cpt = cpt + 1;
+          System.out.println(fichier.getNom());
+        }
+
         System.out.println(taille + ". Retourner au menu principal");
         System.out.println("Veuillez sélectionner le fichier dont vous voulez assigner un degré de confidentialité :");
         scanner = new Scanner(System.in);
@@ -134,7 +137,7 @@ public class IHM {
      
       choix = scanner.nextInt();
 
-      } while (choix < taille);
+      } while (choix > taille);
       if (choix == taille) {
           Menu();
       }
@@ -158,7 +161,8 @@ public class IHM {
         System.out.println("====================================");
         noeudClient.getListeNoeudsConfiance();
         System.out.println("");
-        System.out.println("1. Retourner au menu principal");
+        System.out.println("0. Retourner au menu principal");
+        System.out.println("Appuyer sur n'importe quel chiffre pour ajouter un  noeud de confiance");
         scanner = new Scanner(System.in);
         choix = scanner.nextInt();
         if (choix == 1) {
@@ -166,7 +170,7 @@ public class IHM {
         }
         else {
             System.out.println("Veuillez saisir l’adresse réseau du nouveau noeud de confiance :");
-            adresse = scanner.nextLine();
+            adresse = scanner.next();
             System.out.println("Quel degré de confiance souhaitez-vous lui assigner ?");
             choix = scanner.nextInt();
             noeudClient.ajouterNoeudConfiance(adresse);
@@ -215,17 +219,19 @@ public class IHM {
 
         List<String> listeAutorise = new ArrayList<String>();
         int taille;
+        int cpt2 = 1;
         int choix,choix2,choix3, choix4,choix5,cpt = 0;
         boolean autorise;
         do {
              System.out.println("Modification de la liste des noeuds de confiance");
              System.out.println("===================================================");
              listeFichiers = noeudClient.getListeFichiers();
-             taille = listeFichiers.size();
-            for (int i = 0; i < taille; i++) {
-                System.out.print(i+1);
-                System.out.println(". " + listeFichiers.get(i));
-            }
+             taille = listeFichiers.size() + 1;
+            for (Fichier fichier : listeFichiers) {
+            System.out.print(cpt2 + ". ");
+            cpt2 = cpt2 + 1;
+          System.out.println(fichier.getNom());
+        }
         System.out.println(taille + ". Retourner au menu principal");
         System.out.println("Veuillez sélectionner le fichier dont vous voulez modifier la liste des noeuds :");
         scanner = new Scanner(System.in);
@@ -233,7 +239,7 @@ public class IHM {
 
       choix = scanner.nextInt();
 
-      } while (choix < taille);
+      } while (choix > taille);
 
          if (choix == taille) {
           Menu();
