@@ -68,7 +68,7 @@ public class IHM {
             System.out.println("");
             System.out.println("Veuillez saisir l’action désirée :");
         scanner = new Scanner(System.in);
-      try{
+     
       choix = scanner.nextInt();
 
       switch (choix) {
@@ -91,9 +91,7 @@ public class IHM {
         default : System.out.println("Erreur de saisie: vous devez saisir un nombre entre 1 et 8.");
           break;
       }
-      }catch (Exception e) {
-          System.out.println("Erreur de saisie: vous devez saisir un nombre entre 1 et 8.");
-        }
+      
     } while (choix != 8);
 
 
@@ -104,13 +102,15 @@ public class IHM {
 
     public void listerFichiers(){
         System.out.println("Liste des fichiers du répertoire courant");
-        System.out.println("========================================");
-        noeudClient.getListeFichiers();
-        System.out.println("Appuyer sur n’importe quelle touche pour revenir au menu principal");
-        try {System.in.read();} catch(Exception e) {}
-        if (scanner.hasNext()) {
-            Menu();
+        System.out.println("========================================\n");
+
+        for (Fichier fichier : noeudClient.getListeFichiers()) {
+          System.out.println(fichier.getNom());
         }
+
+        System.out.println("\nAppuyer sur n’importe quelle touche pour revenir au menu principal");
+        scanner.next();
+        
 
 
     }

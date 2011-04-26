@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package client;
+
+import java.util.Scanner;
 
 /**
  * Programme côté client.
@@ -15,12 +16,14 @@ package client;
  */
 public class MainClient {
 
-    /**
-     * @param args
-     *        Les arguments de la ligne de commande
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-    }
-
+  /**
+   * @param args
+   *        Les arguments de la ligne de commande
+   */
+  public static void main(String[] args) {
+    NoeudClient noeudClient = new NoeudClient();
+    Scanner scanner = new Scanner(System.in);
+    IHM ihm = new IHM(noeudClient, scanner);
+    ihm.Menu();
+  }
 }

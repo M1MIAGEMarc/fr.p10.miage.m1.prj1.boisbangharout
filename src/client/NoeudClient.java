@@ -48,6 +48,13 @@ public class NoeudClient {
       adresse = Ip.getHostAddress();
       listeFichiers = new ArrayList<Fichier>();
       listeNoeudsConfiance = new ArrayList<NoeudConfiance>();
+      File file = new File(".");
+      File[] files = file.listFiles();
+      for (int i = 0; i < files.length; i++) {
+      if (files[i].isFile()) {
+        listeFichiers.add(new Fichier(files[i].getName()));
+      }
+    }
     } catch (UnknownHostException ex) {
       Logger.getLogger(NoeudClient.class.getName()).log(Level.SEVERE, null, ex);
     }
