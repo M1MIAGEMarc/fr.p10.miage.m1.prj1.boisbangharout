@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.AccessException;
+import java.rmi.ConnectException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -97,7 +98,7 @@ public class NoeudClientTest {
     try {
       /*InetAddress adress = Inet4Address.getLocalHost();
       adresse = adress.getHostAddress();*/
-      adresse = "192.168.19.3";
+      adresse = "192.168.19.4";
       noeudClient.ajouterNoeudConfiance(adresse);
       Assert.assertEquals(adresse, listeNoeudsConfiance.get(0).getAdresse());
       /*
@@ -117,7 +118,17 @@ public class NoeudClientTest {
       noeudClient.ajouterNoeudConfiance(adresse);
       Assert.assertEquals(adresse, listeNoeudsConfiance.get(3).getAdresse());
        */
+    } catch (MalformedURLException ex) {
+      Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (ConnectException ex) {
+      Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (RemoteException ex) {
+      Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
     } catch (IndexOutOfBoundsException e) {
+      System.out.println(e.getMessage());
+      Assert.fail();
+    }
+    catch (NotBoundException e) {
       System.out.println(e.getMessage());
       Assert.fail();
     }
@@ -158,7 +169,7 @@ public class NoeudClientTest {
       fichier.setNiveauConfidentialite(1);
       listeFichiers.add(fichier);
       //String adresse = noeudClient.getAdresse();
-      String adresse = "192.168.19.3";
+      String adresse = "192.168.19.4";
       
       try {
         fileReader = new FileReader(listeFichiers.get(0).getNom());
@@ -279,7 +290,7 @@ public class NoeudClientTest {
       InetAddress Ip = InetAddress.getLocalHost();
       adresse = Ip.getHostAddress();
        */
-      adresse = "192.168.19.3";
+      adresse = "192.168.19.4";
       nomFichier = "Fic11.txt";
       List<Fichier> listeFichiers = noeudClient.getListeFichiers();
       listeFichiers.add(new Fichier("Fic1.txt"));
@@ -319,7 +330,7 @@ public class NoeudClientTest {
       Duplication duplication;
       FileReader fileReader = null;
       String adresse = noeudClient.getAdresse();
-      String adresseDistante = "192.168.19.3";
+      String adresseDistante = "192.168.19.4";
       List<Fichier> listeFichiers = noeudClient.getListeFichiers();
       List<NoeudConfiance> listeNoeudsConfiance = noeudClient.getListeNoeudsConfiance();
 

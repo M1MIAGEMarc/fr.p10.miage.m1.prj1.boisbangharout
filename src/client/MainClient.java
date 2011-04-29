@@ -24,6 +24,6 @@ public class MainClient {
     NoeudClient noeudClient = new NoeudClient();
     Scanner scanner = new Scanner(System.in);
     IHM ihm = new IHM(noeudClient, scanner);
-    ihm.Menu();
+    ihm.menu();
   }
 }

@@ -11,15 +11,17 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.UnknownHostException;
+import java.rmi.ConnectException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import serveur.Duplication;
-
 
 /**
  * Cette classe a pour but de modéliser la machine cliente
@@ -29,16 +31,12 @@ import serveur.Duplication;
  */
 public class NoeudClient {
 
-
   /****************************   Attributs   *********************************/
   private String adresse;
   private List<Fichier> listeFichiers;
   private List<NoeudConfiance> listeNoeudsConfiance;
 
-
-
   /****************************   Constructeur(s)   ***************************/
-  
   /*
    * Initialise un noeud client avec sa propre adresse comme attribut "adresse"
    */
@@ -51,10 +49,10 @@ public class NoeudClient {
       File file = new File(".");
       File[] files = file.listFiles();
       for (int i = 0; i < files.length; i++) {
-      if (files[i].isFile()) {
-        listeFichiers.add(new Fichier(files[i].getName()));
+        if (files[i].isFile()) {
+          listeFichiers.add(new Fichier(files[i].getName()));
+        }
       }
-    }
     } catch (UnknownHostException ex) {
       Logger.getLogger(NoeudClient.class.getName()).log(Level.SEVERE, null, ex);
     }
@@ -62,15 +60,11 @@ public class NoeudClient {
 
   /*
   public NoeudClient(String adresse, List<Fichier> listeFichiers, List<NoeudConfiance> listeNoeudsConfiance) {
-    this.adresse = adresse;
-    this.listeFichiers = listeFichiers;
-    this.listeNoeudsConfiance = listeNoeudsConfiance;
+  this.adresse = adresse;
+  this.listeFichiers = listeFichiers;
+  this.listeNoeudsConfiance = listeNoeudsConfiance;
   }*/
-
-
-
   /****************************   Accesseurs   ********************************/
-
   /**
    * Renvoie l'adresse du noeud client
    * 
@@ -128,10 +122,7 @@ public class NoeudClient {
     this.listeNoeudsConfiance = listeNoeudsConfiance;
   }
 
-
-
   /****************************   Autres méthodes   ***************************/
-
   /**
    * Permet d'affecter un degré de confidentialité à un fichier. Ce degré a pour but
    * de déterminer les noeuds de confiance sur lesquels le fichier en question peut
@@ -169,19 +160,23 @@ public class NoeudClient {
    * @param adresse
    *        L'adresse du noeud de confiance que l'on souhaite ajouter
    */
-  public void ajouterNoeudConfiance(String adresse) {
-
-    try {
+  public boolean ajouterNoeudConfiance(String adresse) throws NotBoundException, MalformedURLException, ConnectException, RemoteException {
       //Registry registry = LocateRegistry.getRegistry(adresse);
       //Duplication duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");
-      Duplication duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/NoeudServeur");
-      System.out.println("ajouterNoeudConfiance (après lookup)");
-      System.out.println("rmi://" + adresse + "/NoeudServeur");
-      NoeudConfiance noeudConfiance = new NoeudConfiance(adresse, duplication);
-      listeNoeudsConfiance.add(noeudConfiance);
-    } catch (Exception e) {
-      e.printStackTrace();
+      boolean succes = true;
+      for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
+        if(noeudConfiance.getAdresse().equals(adresse)){
+          succes = false;
+          break;
+        }
     }
+      if(succes) {
+        Duplication duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/NoeudServeur");
+        NoeudConfiance noeudConfiance = new NoeudConfiance(adresse, duplication);
+        listeNoeudsConfiance.add(noeudConfiance);
+      }
+
+      return succes;
   }
 
   /**
