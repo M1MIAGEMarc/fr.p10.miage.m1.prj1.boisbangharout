@@ -269,6 +269,9 @@ public class NoeudClient {
     for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
       if (noeudConfiance.getAdresse().equals(adresse)) {
         listeNoeudsConfiance.remove(noeudConfiance);
+        for (Fichier fichier : listeFichiers) {
+          fichier.getNoeudsConfianceMap().remove(noeudConfiance.getAdresse());
+        }
         break;
       }
     }
