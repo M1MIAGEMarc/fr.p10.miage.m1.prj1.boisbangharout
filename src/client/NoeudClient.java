@@ -64,6 +64,7 @@ public class NoeudClient {
   this.listeFichiers = listeFichiers;
   this.listeNoeudsConfiance = listeNoeudsConfiance;
   }*/
+  
   /****************************   Accesseurs   ********************************/
   /**
    * Renvoie l'adresse du noeud client
@@ -122,6 +123,8 @@ public class NoeudClient {
     this.listeNoeudsConfiance = listeNoeudsConfiance;
   }
 
+
+  
   /****************************   Autres méthodes   ***************************/
   /**
    * Permet d'affecter un degré de confidentialité à un fichier. Ce degré a pour but
@@ -226,7 +229,7 @@ public class NoeudClient {
    *   pour ceux-ci </li>
    * </ul>
    */
-  public void dupliquerFichier() {
+  public void dupliquerFichiers() {
     for (Fichier fichier : listeFichiers) {
       if (fichier.getNiveauConfidentialite() != 4) {
         for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {

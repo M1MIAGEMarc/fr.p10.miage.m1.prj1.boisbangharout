@@ -160,7 +160,7 @@ public class NoeudClientTest {
   }
 
   @Test
-  public void testDupliquerFichier() {
+  public void testDupliquerFichiers() {
     
     try {
       FileReader fileReader = null;
@@ -183,7 +183,7 @@ public class NoeudClientTest {
         
         noeud.setNiveauConfiance(1);
         noeudClient.getListeNoeudsConfiance().add(noeud);
-        noeudClient.dupliquerFichier();
+        noeudClient.dupliquerFichiers();
 
         for (NoeudConfiance noeudConfiance : noeudClient.getListeNoeudsConfiance()) {  
           Assert.assertNotNull(new FileReader(adresse + "_" + listeFichiers.get(0).getNom()));

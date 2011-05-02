@@ -76,10 +76,9 @@ public class Fichier {
   }
 
   /**
-   * Affecte à l'attribut noeudsConfianceMap la valeur passée en paramètre
-   *
-   * @param niveauConfidentialite
-   *        Le nouvelle valeur de l'attribut noeudsConfianceMap
+   * Affecte à l'attribut noeudsConfianceMap la valeur passée en paramètre;
+   * 
+   * @param noeudsConfianceMap
    */
   public void setNoeudsConfianceMap(HashMap<String, Boolean> noeudsConfianceMap) {
     this.noeudsConfianceMap = noeudsConfianceMap;
