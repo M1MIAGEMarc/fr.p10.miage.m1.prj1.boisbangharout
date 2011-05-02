@@ -92,6 +92,7 @@ public class Fichier {
   public String getNom() {
     return nom;
   }
+  
 
   /**
    * Affecte à l'attribut nom la valeur passée en paramètre

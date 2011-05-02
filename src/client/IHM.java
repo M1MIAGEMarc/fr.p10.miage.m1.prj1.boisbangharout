@@ -190,23 +190,30 @@ public class IHM {
         scanner = new Scanner(System.in);
 
         choix = scanner.nextInt();
-
+        if(choix < 1 || choix > cpt)
+          System.out.println("Erreur de saisie: votre choix doit être compris entre 1 et " + cpt);
       }
-      while (choix > cpt);
+      while (choix < 1 || choix > cpt);
       /*
       if (choix == cpt) {
       menu();
       } else {
        */
       if (choix < cpt) {
+        do{
         System.out.println("Quel degré de confidentialité souhaitez-vous lui assigner ?");
         choix2 = scanner.nextInt();
+
+        if(choix2 < 1 || choix2 > 4)
+          System.out.println("Erreur de saisie: votre choix doit être compris entre 1 et 4");
+
         //listeFichiers.get(choix).setNiveauConfidentialite(choix2);
+        
+        //assignerConfidentialite();
+        }while(choix2 < 1 || choix2 > 4);
         String nomFichier = noeudClient.getListeFichiers().get(choix - 1).getNom();
         noeudClient.assignerConfidentialite(nomFichier, choix2);
         System.out.println("Degré de confidentialité assigné avec succès.");
-        //assignerConfidentialite();
-
       }
     }
     while (choix < cpt);
