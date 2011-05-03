@@ -35,7 +35,7 @@ public class NoeudClient {
   private String adresse;
   private List<Fichier> listeFichiers;
   private List<NoeudConfiance> listeNoeudsConfiance;
-
+  
   /****************************   Constructeur(s)   ***************************/
   /*
    * Initialise un noeud client avec sa propre adresse comme attribut "adresse"
