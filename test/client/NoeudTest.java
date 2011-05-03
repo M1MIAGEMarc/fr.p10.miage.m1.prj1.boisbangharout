@@ -314,10 +314,13 @@ public class NoeudTest {
       duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/Noeud");
       listeNoeudsConfiance.add(new NoeudConfiance(adresse, duplication));
       //listeFichiers.add(new Fichier("Fic0.txt"));
-      listeFichiers.add(new Fichier("Fic1.txt"));
-      listeFichiers.add(new Fichier("Fic4.txt"));
+      //listeFichiers.add(new Fichier("Fic1.txt"));
+      //listeFichiers.add(new Fichier("Fic4.txt"));
       List<String> fichiersSauves = new ArrayList<String>();
-
+      List<String> listeNomFichiersClients = new ArrayList<String>();
+      for (Fichier fichier : listeFichiers) {
+        listeNomFichiersClients.add(fichier.getNom());
+      }
       for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
         duplication = noeudConfiance.getDuplication();
         System.out.println(adresse + "_" + listeFichiers.get(0).getNom());
@@ -327,9 +330,7 @@ public class NoeudTest {
           int indexSeparateur = nomFichier.indexOf("_");
           if (nomFichier.contains("_")
                   && nomFichier.substring(0, indexSeparateur).equals(adresse)
-                  && !nomFichier.substring(adresse.length() + 1, nomFichier.length()).equals("Fic1.txt")
-                  && !nomFichier.substring(adresse.length() + 1, nomFichier.length()).equals("Fic4.txt")
-                  && !nomFichier.substring(adresse.length() + 1, nomFichier.length()).equals("(2)-Fic3")){
+                  && !listeNomFichiersClients.contains(nomFichier.substring(adresse.length() + 1, nomFichier.length()))){
             System.out.println("nomfichier" + nomFichier);
             fichiersSauves.add(nomFichier);
           }
