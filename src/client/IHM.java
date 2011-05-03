@@ -190,8 +190,9 @@ public class IHM {
         scanner = new Scanner(System.in);
 
         choix = scanner.nextInt();
-        if(choix < 1 || choix > cpt)
+        if (choix < 1 || choix > cpt) {
           System.out.println("Erreur de saisie: votre choix doit être compris entre 1 et " + cpt);
+        }
       }
       while (choix < 1 || choix > cpt);
       /*
@@ -200,17 +201,19 @@ public class IHM {
       } else {
        */
       if (choix < cpt) {
-        do{
-        System.out.println("Quel degré de confidentialité souhaitez-vous lui assigner ?");
-        choix2 = scanner.nextInt();
+        do {
+          System.out.println("Quel degré de confidentialité souhaitez-vous lui assigner ?");
+          choix2 = scanner.nextInt();
 
-        if(choix2 < 1 || choix2 > 4)
-          System.out.println("Erreur de saisie: votre choix doit être compris entre 1 et 4");
+          if (choix2 < 1 || choix2 > 4) {
+            System.out.println("Erreur de saisie: votre choix doit être compris entre 1 et 4");
+          }
 
-        //listeFichiers.get(choix).setNiveauConfidentialite(choix2);
-        
-        //assignerConfidentialite();
-        }while(choix2 < 1 || choix2 > 4);
+          //listeFichiers.get(choix).setNiveauConfidentialite(choix2);
+
+          //assignerConfidentialite();
+        }
+        while (choix2 < 1 || choix2 > 4);
         String nomFichier = noeudClient.getListeFichiers().get(choix - 1).getNom();
         noeudClient.assignerConfidentialite(nomFichier, choix2);
         System.out.println("Degré de confidentialité assigné avec succès.");
@@ -240,7 +243,7 @@ public class IHM {
     for (NoeudConfiance noeudConfiance : noeudClient.getListeNoeudsConfiance()) {
       System.out.println("   " + noeudConfiance.getAdresse());
     }
-    System.out.println("\n1. Retourner au menu principal");
+    System.out.println("\n1. Retourner au menu principal\n");
     //System.out.println("Appuyer sur n'importe quel chiffre pour ajouter un  noeud de confiance");
     System.out.println("Veuillez saisir l’adresse réseau du nouveau noeud de confiance :");
     scanner = new Scanner(System.in);
@@ -309,7 +312,7 @@ public class IHM {
       }
       taille = noeudClient.getListeNoeudsConfiance().size();
       for (int i = 0; i < taille; i++) {
-        System.out.println((i + 1) + ". " + noeudClient.getListeNoeudsConfiance().get(i).getAdresse());
+        System.out.println("   " + (i + 1) + ". " + noeudClient.getListeNoeudsConfiance().get(i).getAdresse());
       }
       if (taille > 0) {
         System.out.println("\n   " + (taille + 1) + ". Retourner au menu principal");
@@ -325,14 +328,15 @@ public class IHM {
       noeudClient.supprimerNoeudConfiance(noeudClient.getListeNoeudsConfiance().get(choix - 1).getAdresse());
       System.out.println("\nNoeud de confiance supprimé avec succès.\n");
 
-      System.out.println("Appuyer sur entrée pour revenir au menu principal");
+    }
 
-      try {
-        System.in.read();
-      }
-      catch (IOException ioe) {
-        ioe.printStackTrace();
-      }
+    System.out.println("Appuyer sur entrée pour revenir au menu principal\n");
+
+    try {
+      System.in.read();
+    }
+    catch (IOException ioe) {
+      ioe.printStackTrace();
     }
   }
 

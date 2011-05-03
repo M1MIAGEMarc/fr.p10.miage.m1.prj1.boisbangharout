@@ -164,8 +164,6 @@ public class NoeudClient {
    *        L'adresse du noeud de confiance que l'on souhaite ajouter
    */
   public boolean ajouterNoeudConfiance(String adresse) throws NotBoundException, MalformedURLException, ConnectException, RemoteException {
-      //Registry registry = LocateRegistry.getRegistry(adresse);
-      //Duplication duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");
       boolean succes = true;
       for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
         if(noeudConfiance.getAdresse().equals(adresse)){
@@ -340,7 +338,6 @@ public class NoeudClient {
         List<String> listeFichiersServeur = noeudConfiance.getDuplication().getListeNomsFichiers();
 
         for (String nomFichier : listeFichiersServeur) {
-          //System.out.println(nomFichier);
           trouve = false;
           if (nomFichier.length() > adresse.length()
                   && nomFichier.substring(0, adresse.length()).equals(adresse)) {
