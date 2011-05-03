@@ -42,10 +42,8 @@ public class NoeudServeur extends UnicastRemoteObject implements Duplication {
     listeNomsFichiers = new ArrayList<String>();
     File file = new File(".");
     File[] files = file.listFiles();
-    System.out.println("test");
     for (int i = 0; i < files.length; i++) {
       if (files[i].isFile()) {
-        System.out.println(files[i].getName());
         listeNomsFichiers.add(files[i].getName());
       }
     }
