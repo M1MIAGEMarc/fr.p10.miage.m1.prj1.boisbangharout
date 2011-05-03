@@ -10,6 +10,7 @@ import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Scanner;
@@ -171,55 +172,69 @@ public class IHM {
     //int taille;
     int cpt;
     int choix, choix2 = 0;
-    do {
-      cpt = 1;
-      System.out.println("Assigner un degré de confidentialité");
-      System.out.println("====================================\n");
-      /*
-      listeFichiers = noeudClient.getListeFichiers();
-      taille = listeFichiers.size() + 1;*/
-      for (Fichier fichier : noeudClient.getListeFichiers()) {
-        System.out.println("   " + cpt + ". " + fichier.getNom());
-        cpt = cpt + 1;
-      }
 
-      System.out.println("\n   " + cpt + ". Retourner au menu principal");
-
+    try {
       do {
-        System.out.println("\nVeuillez sélectionner le fichier dont vous voulez assigner un degré de confidentialité :");
-        scanner = new Scanner(System.in);
+        cpt = 1;
+        System.out.println("Assigner un degré de confidentialité");
+        System.out.println("====================================\n");
+        /*
+        listeFichiers = noeudClient.getListeFichiers();
+        taille = listeFichiers.size() + 1;*/
+        for (Fichier fichier : noeudClient.getListeFichiers()) {
+          System.out.println("   " + cpt + ". " + fichier.getNom());
+          cpt = cpt + 1;
+        }
 
-        choix = scanner.nextInt();
-        if (choix < 1 || choix > cpt) {
-          System.out.println("Erreur de saisie: votre choix doit être compris entre 1 et " + cpt);
+        System.out.println("\n   " + cpt + ". Retourner au menu principal");
+
+
+        do {
+          System.out.println("\nVeuillez sélectionner le fichier dont vous voulez assigner un degré de confidentialité :");
+          scanner = new Scanner(System.in);
+
+          choix = scanner.nextInt();
+          if (choix < 1 || choix > cpt) {
+            System.out.println("Erreur de saisie: votre choix doit être compris entre 1 et " + cpt);
+          }
+        }
+        while (choix < 1 || choix > cpt);
+        /*
+        if (choix == cpt) {
+        menu();
+        } else {
+         */
+        if (choix < cpt) {
+          do {
+            System.out.println("Quel degré de confidentialité souhaitez-vous lui assigner ?");
+            choix2 = scanner.nextInt();
+
+            if (choix2 < 1 || choix2 > 4) {
+              System.out.println("Erreur de saisie: votre choix doit être compris entre 1 et 4");
+            }
+
+            //listeFichiers.get(choix).setNiveauConfidentialite(choix2);
+
+            //assignerConfidentialite();
+          }
+          while (choix2 < 1 || choix2 > 4);
+          String nomFichier = noeudClient.getListeFichiers().get(choix - 1).getNom();
+          noeudClient.assignerConfidentialite(nomFichier, choix2);
+          System.out.println("Degré de confidentialité assigné avec succès.");
         }
       }
-      while (choix < 1 || choix > cpt);
-      /*
-      if (choix == cpt) {
-      menu();
-      } else {
-       */
-      if (choix < cpt) {
-        do {
-          System.out.println("Quel degré de confidentialité souhaitez-vous lui assigner ?");
-          choix2 = scanner.nextInt();
-
-          if (choix2 < 1 || choix2 > 4) {
-            System.out.println("Erreur de saisie: votre choix doit être compris entre 1 et 4");
-          }
-
-          //listeFichiers.get(choix).setNiveauConfidentialite(choix2);
-
-          //assignerConfidentialite();
-        }
-        while (choix2 < 1 || choix2 > 4);
-        String nomFichier = noeudClient.getListeFichiers().get(choix - 1).getNom();
-        noeudClient.assignerConfidentialite(nomFichier, choix2);
-        System.out.println("Degré de confidentialité assigné avec succès.");
+      while (choix < cpt);
+    }
+    catch (InputMismatchException ime) {
+      System.out.println("La valeur saisie doit être un nombre");
+      System.out.println("\nAppuyer sur entrée revenir au menu principal");
+      try {
+        System.in.read();
+      }
+      catch (IOException ioe) {
+        ioe.printStackTrace();
       }
     }
-    while (choix < cpt);
   }
 
   /**
