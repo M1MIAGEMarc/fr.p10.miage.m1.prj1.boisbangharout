@@ -12,7 +12,6 @@ import java.net.UnknownHostException;
 import java.rmi.AccessException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
-import serveur.NoeudServeur;
 
 /**
  * Programme côté serveur.

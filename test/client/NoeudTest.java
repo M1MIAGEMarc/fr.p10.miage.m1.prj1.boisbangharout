@@ -171,9 +171,6 @@ public class NoeudTest {
         fileReader = new FileReader(listeFichiers.get(0).getNom());
         BufferedReader br = new BufferedReader(fileReader);
 
-        /*
-        Registry registry = LocateRegistry.getRegistry();
-        Duplication duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");*/
         Duplication duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/Noeud");
         NoeudConfiance noeud2 = new NoeudConfiance(adresse, duplication);
         listeFichiers.get(0).setNiveauConfidentialite(1);
@@ -308,9 +305,6 @@ public class NoeudTest {
       List<Fichier> listeFichiers = noeud.getListeFichiers();
       List<NoeudConfiance> listeNoeudsConfiance = noeud.getListeNoeudsConfiance();
 
-      /*Registry registry = LocateRegistry.getRegistry();
-      duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");
-       */
       duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/Noeud");
       listeNoeudsConfiance.add(new NoeudConfiance(adresse, duplication));
       //listeFichiers.add(new Fichier("Fic0.txt"));
@@ -390,10 +384,7 @@ public class NoeudTest {
 
       Duplication duplication;
       List<NoeudConfiance> listeNoeudsConfiance = noeud.getListeNoeudsConfiance();
-      /*
-      Registry registry = LocateRegistry.getRegistry();
-      duplication = (Duplication) registry.lookup("rmi://" + adresse + "/NoeudServeur");
-       */
+
       duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/Noeud");
       listeNoeudsConfiance.add(new NoeudConfiance(adresse, duplication));
       noeud.recupererFichiersPerdus();
