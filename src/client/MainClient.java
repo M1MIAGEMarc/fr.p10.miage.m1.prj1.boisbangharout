@@ -23,7 +23,7 @@ public class MainClient {
   public static void main(String[] args) {
     NoeudClient noeudClient = new NoeudClient();
     Scanner scanner = new Scanner(System.in);
-    IHM ihm = new IHM(noeudClient, scanner);
-    ihm.menu();
+    /*IHM ihm = new IHM(noeudClient, scanner);
+    ihm.menu();*/
   }
 }

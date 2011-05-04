@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.InputMismatchException;
@@ -25,7 +26,7 @@ import java.util.Scanner;
 public class IHM {
 
   /****************************   Attributs   *********************************/
-  private NoeudClient noeudClient;
+  private Noeud noeud;
   private Scanner scanner;
 
   /****************************   Constructeur(s)   ***************************/
@@ -34,22 +35,27 @@ public class IHM {
    */
   public IHM() {
     super();
-    noeudClient = new NoeudClient();
-    scanner = new Scanner(System.in);
+    try {
+      noeud = new Noeud();
+      scanner = new Scanner(System.in);
+    }
+    catch (RemoteException re) {
+      re.printStackTrace();
+    }
   }
 
   /**
    * Initialise les attributs de la classe avec les valeurs passées en paramètres
    *
-   * @param noeudClient
-   *        la nouvelle valeur de l'attribut noeudClient
+   * @param noeud
+   *        la nouvelle valeur de l'attribut noeud
    *
    * @param scanner
    *        la nouvelle valeur de l'attribut scanner
    */
-  public IHM(NoeudClient noeudClient, Scanner scanner) {
+  public IHM(Noeud noeud, Scanner scanner) {
     super();
-    this.noeudClient = noeudClient;
+    this.noeud = noeud;
     this.scanner = scanner;
   }
 
@@ -59,18 +65,18 @@ public class IHM {
    * 
    * @return le noeud client de la classe
    */
-  public NoeudClient getNoeudClient() {
-    return noeudClient;
+  public Noeud getNoeud() {
+    return noeud;
   }
 
   /**
-   * Affecte à l'attribut noeudClient la valeur passée en paramètre
+   * Affecte à l'attribut noeud la valeur passée en paramètre
    *
-   * @param noeudClient
-   *        la nouvelle valeur de l'attribut noeudClient
+   * @param noeud
+   *        la nouvelle valeur de l'attribut noeud
    */
-  public void setNoeudClient(NoeudClient noeudClient) {
-    this.noeudClient = noeudClient;
+  public void setNoeud(Noeud noeud) {
+    this.noeud = noeud;
   }
 
   /****************************   Autres méthodes   ***************************/
@@ -97,11 +103,13 @@ public class IHM {
       System.out.println("   7. Récupérer les données perdues");
       System.out.println("   8. Quitter");
       System.out.println("");
+      /*
       System.out.println("Veuillez saisir l’action désirée :");
       scanner = new Scanner(System.in);
-
-      choix = scanner.nextInt();
-
+      */
+      //choix = saisieControle(8);
+      choix = saisir("Veuillez saisir l’action désirée : ", 8);
+      
       switch (choix) {
 
         case 1:
@@ -127,11 +135,7 @@ public class IHM {
           break;
         case 8:
           break;
-        default:
-          System.out.println("Erreur de saisie: vous devez saisir un nombre entre 1 et 8.");
-          break;
       }
-
     }
     while (choix != 8);
 
@@ -139,6 +143,7 @@ public class IHM {
     System.out.println("Sortie du menu général.");
   }
 
+  
   /**
    * Affiche la liste des fichiers que contient le noeud client (la machine
    * courante)
@@ -147,7 +152,7 @@ public class IHM {
     try {
       System.out.println("Liste des fichiers du répertoire courant");
       System.out.println("========================================\n");
-      for (Fichier fichier : noeudClient.getListeFichiers()) {
+      for (Fichier fichier : noeud.getListeFichiers()) {
         System.out.println("   " + fichier.getNom());
       }
       System.out.println("\nAppuyer sur entrée revenir au menu principal");
@@ -179,9 +184,9 @@ public class IHM {
         System.out.println("Assigner un degré de confidentialité");
         System.out.println("====================================\n");
         /*
-        listeFichiers = noeudClient.getListeFichiers();
+        listeFichiers = noeud.getListeFichiers();
         taille = listeFichiers.size() + 1;*/
-        for (Fichier fichier : noeudClient.getListeFichiers()) {
+        for (Fichier fichier : noeud.getListeFichiers()) {
           System.out.println("   " + cpt + ". " + fichier.getNom());
           cpt = cpt + 1;
         }
@@ -193,12 +198,14 @@ public class IHM {
           System.out.println("\nVeuillez sélectionner le fichier dont vous voulez assigner un degré de confidentialité :");
           scanner = new Scanner(System.in);
 
+          /*
           choix = scanner.nextInt();
           if (choix < 1 || choix > cpt) {
-            System.out.println("Erreur de saisie: votre choix doit être compris entre 1 et " + cpt);
-          }
+          System.out.println("Erreur de saisie: votre choix doit être compris entre 1 et " + cpt);
+          }*/
+          choix = saisieControle(cpt);
         }
-        while (choix < 1 || choix > cpt);
+        while (choix == -1);
         /*
         if (choix == cpt) {
         menu();
@@ -207,19 +214,19 @@ public class IHM {
         if (choix < cpt) {
           do {
             System.out.println("Quel degré de confidentialité souhaitez-vous lui assigner ?");
-            choix2 = scanner.nextInt();
-
+            choix2 = saisieControle(4);
+            /*
             if (choix2 < 1 || choix2 > 4) {
-              System.out.println("Erreur de saisie: votre choix doit être compris entre 1 et 4");
+            System.out.println("Erreur de saisie: votre choix doit être compris entre 1 et 4");
             }
-
+             */
             //listeFichiers.get(choix).setNiveauConfidentialite(choix2);
 
             //assignerConfidentialite();
           }
-          while (choix2 < 1 || choix2 > 4);
-          String nomFichier = noeudClient.getListeFichiers().get(choix - 1).getNom();
-          noeudClient.assignerConfidentialite(nomFichier, choix2);
+          while (choix2 == -1);
+          String nomFichier = noeud.getListeFichiers().get(choix - 1).getNom();
+          noeud.assignerConfidentialite(nomFichier, choix2);
           System.out.println("Degré de confidentialité assigné avec succès.");
         }
       }
@@ -252,10 +259,10 @@ public class IHM {
     System.out.println("Ajout d’un noeud de confiance");
     System.out.println("====================================\n");
 
-    if (noeudClient.getListeNoeudsConfiance().isEmpty()) {
+    if (noeud.getListeNoeudsConfiance().isEmpty()) {
       System.out.println("Aucun noeud de confiance enregistré.");
     }
-    for (NoeudConfiance noeudConfiance : noeudClient.getListeNoeudsConfiance()) {
+    for (NoeudConfiance noeudConfiance : noeud.getListeNoeudsConfiance()) {
       System.out.println("   " + noeudConfiance.getAdresse());
     }
     System.out.println("\n1. Retourner au menu principal\n");
@@ -268,12 +275,17 @@ public class IHM {
       try {
         //System.out.println("Veuillez saisir l’adresse réseau du nouveau noeud de confiance :");
         System.out.println("Tentative de connexion à la machine " + adresse + " ...\n");
-        if (noeudClient.ajouterNoeudConfiance(adresse)) {
-          System.out.println("Quel degré de confiance souhaitez-vous lui assigner ?");
-          choix = scanner.nextInt();
-          noeudClient.assignerConfiance(adresse, choix);
+        if (noeud.ajouterNoeudConfiance(adresse)) {
+          do {
+            System.out.println("Quel degré de confiance souhaitez-vous lui assigner ?");
+            //choix = scanner.nextInt();
+            choix = saisieControle(3);
+          }
+          while (choix == -1);
+
+          noeud.assignerConfiance(adresse, choix);
           System.out.println("Noeud de confiance ajouté avec succès.\n");
-          noeudClient.dupliquerFichiers();
+          noeud.dupliquerFichiers();
         }
         else {
           System.out.println("Noeud de confiance déjà présent dans la liste.");
@@ -321,26 +333,30 @@ public class IHM {
       System.out.println("Suppression d’un noeud de confiance");
       System.out.println("====================================\n");
 
-      //listeNoeudsConfiance = noeudClient.getListeNoeudsConfiance();
-      if (noeudClient.getListeNoeudsConfiance().isEmpty()) {
+      //listeNoeudsConfiance = noeud.getListeNoeudsConfiance();
+      if (noeud.getListeNoeudsConfiance().isEmpty()) {
         System.out.println("Aucun noeud de confiance enregistré.");
       }
-      taille = noeudClient.getListeNoeudsConfiance().size();
+      taille = noeud.getListeNoeudsConfiance().size();
       for (int i = 0; i < taille; i++) {
-        System.out.println("   " + (i + 1) + ". " + noeudClient.getListeNoeudsConfiance().get(i).getAdresse());
+        System.out.println("   " + (i + 1) + ". " + noeud.getListeNoeudsConfiance().get(i).getAdresse());
       }
       if (taille > 0) {
         System.out.println("\n   " + (taille + 1) + ". Retourner au menu principal");
-        System.out.println("Veuillez choisir le noeud de confiance à supprimer :");
-        scanner = new Scanner(System.in);
+        do {
+          System.out.println("Veuillez choisir le noeud de confiance à supprimer :");
+          //scanner = new Scanner(System.in);
 
-        choix = scanner.nextInt();
+          //choix = scanner.nextInt();
+          choix = saisieControle(choix);
+        }
+        while (choix == -1);
       }
     }
     while (choix < taille);
 
     if (taille > 0 && choix <= taille) {
-      noeudClient.supprimerNoeudConfiance(noeudClient.getListeNoeudsConfiance().get(choix - 1).getAdresse());
+      noeud.supprimerNoeudConfiance(noeud.getListeNoeudsConfiance().get(choix - 1).getAdresse());
       System.out.println("\nNoeud de confiance supprimé avec succès.\n");
 
     }
@@ -379,11 +395,11 @@ public class IHM {
       System.out.println("Modification de la liste des noeuds de confiance");
       System.out.println("===================================================\n");
       /*
-      listeFichiers = noeudClient.getListeFichiers();
+      listeFichiers = noeud.getListeFichiers();
       taille = listeFichiers.size() + 1;
        */
-      taille = noeudClient.getListeFichiers().size() + 1;
-      for (Fichier fichier : noeudClient.getListeFichiers()) {
+      taille = noeud.getListeFichiers().size() + 1;
+      for (Fichier fichier : noeud.getListeFichiers()) {
         System.out.println("   " + cpt2 + ". " + fichier.getNom());
         cpt2 = cpt2 + 1;
         //System.out.println(fichier.getNom());
@@ -420,11 +436,11 @@ public class IHM {
             System.out.println("Suppression d'un noeud de confiance pour le fichier");
             System.out.println("===================================================");
             System.out.println("Liste des noeuds de confiance dont la duplication est autorisée");
-            noeudFichierMap = noeudClient.getListeFichiers().get(choix).getNoeudsConfianceMap();
+            noeudFichierMap = noeud.getListeFichiers().get(choix).getNoeudsConfianceMap();
 
-            int niveauConfidentialite = noeudClient.getListeFichiers().get(choix - 1).getNiveauConfidentialite();
+            int niveauConfidentialite = noeud.getListeFichiers().get(choix - 1).getNiveauConfidentialite();
 
-            for (NoeudConfiance noeudConfiance : noeudClient.getListeNoeudsConfiance()) {
+            for (NoeudConfiance noeudConfiance : noeud.getListeNoeudsConfiance()) {
               if (noeudConfiance.getNiveauConfiance() >= niveauConfidentialite) {
                 listeAutorise.add(noeudConfiance.getAdresse());
               }
@@ -471,17 +487,17 @@ public class IHM {
 
 
           do {
-            //noeudFichierMap = noeudClient.getListeFichiers().get(choix).getNoeudsConfianceMap();
+            //noeudFichierMap = noeud.getListeFichiers().get(choix).getNoeudsConfianceMap();
             cpt = 0;
             System.out.println("Ajout d'un noeud de confiance pour le fichier");
             System.out.println("===================================================\n");
             System.out.println("Liste des noeuds de confiance dont la duplication n'est pas autorisée");
             //noeudFichierMap = listeFichiers.get(choix).getNoeudsConfianceMap();
-            noeudFichierMap = noeudClient.getListeFichiers().get(choix).getNoeudsConfianceMap();
+            noeudFichierMap = noeud.getListeFichiers().get(choix).getNoeudsConfianceMap();
 
-            int niveauConfidentialite = noeudClient.getListeFichiers().get(choix - 1).getNiveauConfidentialite();
+            int niveauConfidentialite = noeud.getListeFichiers().get(choix - 1).getNiveauConfidentialite();
 
-            for (NoeudConfiance noeudConfiance : noeudClient.getListeNoeudsConfiance()) {
+            for (NoeudConfiance noeudConfiance : noeud.getListeNoeudsConfiance()) {
               if (noeudConfiance.getNiveauConfiance() < niveauConfidentialite) {
                 if (!listeAutorise.contains(noeudConfiance.getAdresse())) {
                   listeAutorise.add(noeudConfiance.getAdresse());
@@ -535,7 +551,7 @@ public class IHM {
    * 
    */
   public void nettoyer() {
-    noeudClient.nettoyerFichiersDupliques();
+    noeud.nettoyerFichiersDupliques();
     System.out.println("Nettoyage des fichiers effectué");
     System.out.println("Appuyer sur entrée pour continuer");
   }
@@ -545,11 +561,116 @@ public class IHM {
    * 
    */
   public void recuperer() {
-    noeudClient.recupererFichiersPerdus();
+    noeud.recupererFichiersPerdus();
     System.out.println("Fichiers récupérés");
     System.out.println("------------------");
-    noeudClient.recupererFichiersPerdus();
     //afficher les fichier recuperer
+  }
 
+  /**
+   * Récupère la saisie du client, effectue un contrôle dessus en fonction des valeurs
+   * passées en paramètre et renvoie la valeur saisie si elle passe le contrôle avec succès,
+   * renvoie -1 sinon.
+   *
+   * Pour passer le contrôle avec succès, la valeur doit être numérique et comprise
+   * entre 1 et le paramètre max (inclus)
+   *
+   * @param max
+   *        la valeur maximale qui peut être saisie
+   * 
+   * @return la valeur saisie par l'utilisateur, -1 si elle n'est pas conforme
+   */
+  public int saisieControle(int max) {
+    int choix = 0;
+
+    try {
+      choix = scanner.nextInt();
+
+      if (choix < 1 || choix > max) {
+        System.out.println("Erreur de saisie: la valeur saisie doit être comprise entre 1 et " + max + ". Valeur trouvée : " + choix + ".");
+        System.out.println("\nAppuyer sur entrée pour recommencer la saisie.");
+        choix = -1;
+        try {
+          System.in.read();
+        }
+        catch (IOException ioe) {
+          ioe.printStackTrace();
+        }
+      }
+    }
+    catch (InputMismatchException ime) {
+      System.out.println("La valeur saisie doit être numérique.");
+      choix = -1;
+    }
+
+    return choix;
+  }
+
+  /**
+   *
+   * @param message
+   *        le message à afficher pour l'invite de commandes
+   *
+   * @param max
+   *        la valeur maximale de la saisie
+   */
+  public int saisir(String message, int max) {
+
+    int saisie = 0;
+    int controle = -1;
+    
+    do {
+      System.out.println(message);
+      try {
+        saisie = scanner.nextInt();
+        controle = controler(saisie, max);
+      }
+      catch (InputMismatchException ime) {
+        System.out.println("La valeur saisie doit être numérique.");
+      }
+    } while (controle == -1);
+
+    return saisie;
+  }
+
+  /**
+   *
+   * @param saisie
+   *        la valeur saisie par l'utilisateur
+   *
+   * @param max
+   *        la valeur maximale de la saisie
+   *
+   * @return la valeur saisie par l'utilisateur si le controle passe avec succès,
+   *         renvoie -1 sinon
+   */
+  public int controler(int valeur, int max) {
+
+    if (valeur < 1 || valeur > max) {
+      System.out.println("Erreur de saisie: la valeur saisie doit être comprise entre 1 et " + max + ". Valeur trouvée : " + valeur + ".");
+      System.out.println("\nAppuyer sur entrée pour recommencer la saisie.");
+      valeur = -1;
+      try {
+        System.in.read();
+      }
+      catch (IOException ioe) {
+        ioe.printStackTrace();
+      }
+    }
+    return valeur;
+  }
+
+  /**
+   * Permet de revenir au menu précédent en appuyant sur la touche entrée
+   * 
+   */
+  public void revenir() {
+    System.out.println("\nAppuyer sur entrée revenir au menu principal.");
+    try {
+      System.in.read();
+    }
+    catch (IOException ioe) {
+      ioe.printStackTrace();
+    }
   }
 }

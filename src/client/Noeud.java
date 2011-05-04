@@ -368,7 +368,7 @@ public class Noeud extends UnicastRemoteObject implements Duplication {
             }
             if (!trouve) {
               noeudConfiance.getDuplication().supprimerFichier(nomFichier);
-              System.out.println("Fichier '" + nomFichier + "' supprimé.");
+              //System.out.println("Fichier '" + nomFichier + "' supprimé.");
             }
           }
         }
@@ -494,7 +494,7 @@ public class Noeud extends UnicastRemoteObject implements Duplication {
       List<String> listeNomsFichiers = new ArrayList<String>();
       if(!listeNomsFichiers.contains(adresse + "_" + nomFichier));
         listeNomsFichiers.add(adresse + "_" + nomFichier);
-      System.out.println("Fichier '" + adresse + "_" + nomFichier + "' ajouté.");
+      //System.out.println("Fichier '" + adresse + "_" + nomFichier + "' ajouté.");
     } catch (IOException ex) {
       Logger.getLogger(NoeudServeur.class.getName()).log(Level.SEVERE, null, ex);
     }
@@ -518,7 +518,7 @@ public class Noeud extends UnicastRemoteObject implements Duplication {
         break;
       }
     }    
-    System.out.println("Fichier '" + nomFichier + "' supprimé.");
+    //System.out.println("Fichier '" + nomFichier + "' supprimé.");
   }
 
   /**

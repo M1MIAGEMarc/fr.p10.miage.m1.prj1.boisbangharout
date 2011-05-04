@@ -325,7 +325,7 @@ public class NoeudTest {
           if (nomFichier.contains("_")
                   && nomFichier.substring(0, indexSeparateur).equals(adresse)
                   && !listeNomFichiersClients.contains(nomFichier.substring(adresse.length() + 1, nomFichier.length()))){
-            System.out.println("nomfichier" + nomFichier);
+            //System.out.println("nomfichier" + nomFichier);
             fichiersSauves.add(nomFichier);
           }
         }
@@ -335,7 +335,7 @@ public class NoeudTest {
 
       for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
         duplication = noeudConfiance.getDuplication();
-        System.out.println(adresse + "_" + listeFichiers.get(0).getNom());
+        //System.out.println(adresse + "_" + listeFichiers.get(0).getNom());
         Assert.assertNotNull(new FileReader(adresse + "_" + listeFichiers.get(0).getNom()));
         List<String> listeNomFichiers = duplication.getListeNomsFichiers();
         for (String fichierSauve : fichiersSauves) {
@@ -389,7 +389,7 @@ public class NoeudTest {
       listeNoeudsConfiance.add(new NoeudConfiance(adresse, duplication));
       noeud.recupererFichiersPerdus();
       Assert.assertNotNull(new FileReader(nomFichier));
-      System.out.println(adresse + "_" + nomFichier);
+      //System.out.println(adresse + "_" + nomFichier);
     }
     catch (UnknownHostException uhe) {
       uhe.printStackTrace();
@@ -475,7 +475,7 @@ public class NoeudTest {
       Assert.assertTrue(true);
     }
     catch (Exception e) {
-
+      e.printStackTrace();
     }
   }
 
@@ -487,7 +487,6 @@ public class NoeudTest {
     String dossierFichiersTest = "Fichiers_Test\\testExtraireDonneesFichier()\\";
     try {
       File fichier = noeud.extraireDonnees(dossierFichiersTest + "10.50.56.11_Fic1.dat");
-      boolean fichierNonVide;
 
       if (!fichier.exists()) {
         Assert.fail();
