@@ -10,9 +10,12 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.AccessException;
-import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
+import serveur.Duplication;
 
 /**
  * Programme principal.
@@ -35,7 +38,10 @@ public class Main {
       Noeud noeud = new Noeud();
 
       // Démarrage du serveur
-      Naming.rebind("rmi://" + adresse + "/Noeud", noeud);
+      //Naming.rebind("rmi://" + adresse + "/Noeud", noeud);
+      Duplication duplicationStub = (Duplication) UnicastRemoteObject.exportObject(noeud, 0);
+      Registry registry = LocateRegistry.createRegistry(1099);
+      registry.rebind("rmi://" + adresse + "/Noeud", duplicationStub);
       System.out.println("Serveur opérationnel.\n");
 
       

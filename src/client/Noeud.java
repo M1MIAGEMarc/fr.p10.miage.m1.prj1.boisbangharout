@@ -14,9 +14,10 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.ConnectException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ import serveur.NoeudServeur;
  * @author Marc Boisban
  * @author Kamel Gharout
  */
-public class Noeud extends UnicastRemoteObject implements Duplication {
+public class Noeud implements Duplication {
 
   /****************************   Attributs   *********************************/
   private String adresse;
@@ -190,7 +191,9 @@ public class Noeud extends UnicastRemoteObject implements Duplication {
         }
     }
       if(succes) {
-        Duplication duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/Noeud");
+        Registry registry = LocateRegistry.getRegistry();
+        Duplication duplication = (Duplication) registry.lookup("rmi://" + adresse + "/Noeud");
+        //Duplication duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/Noeud");
         NoeudConfiance noeudConfiance = new NoeudConfiance(adresse, duplication);
         listeNoeudsConfiance.add(noeudConfiance);
       }
@@ -386,9 +389,12 @@ public class Noeud extends UnicastRemoteObject implements Duplication {
    * noeud client, le principe est le même que pour la méthode nettoyerFichiersDupliques()</p>
    *
    * <p>Exemple : 10.54.65.81_fic.txt (si l'adresse du noeud client est 10.54.65.81)</p>
+   *
+   * @return la liste des noms des fichiers ayant étés récupérés
    */
-  public void recupererFichiersPerdus() {
-
+  public List<String> recupererFichiersPerdus() {
+    List<String> listeNomsFichiers = new ArrayList<String>();
+    
     boolean trouve = false;
     for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
 
@@ -410,6 +416,7 @@ public class Noeud extends UnicastRemoteObject implements Duplication {
 
             if (!trouve) {
               ecrireFichierPerdu(nouveauNomFichier, noeudConfiance.getDuplication().extraireDonnees(nomFichier));
+              listeNomsFichiers.add(nouveauNomFichier);
             }
           }
         }
@@ -417,6 +424,8 @@ public class Noeud extends UnicastRemoteObject implements Duplication {
         re.printStackTrace();
       }
     }
+
+    return listeNomsFichiers;
   }
 
   /**
