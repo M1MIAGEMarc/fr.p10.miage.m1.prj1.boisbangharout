@@ -191,8 +191,8 @@ public class Noeud implements Duplication {
         }
     }
       if(succes) {
-        Registry registry = LocateRegistry.getRegistry();
-        Duplication duplication = (Duplication) registry.lookup("rmi://" + adresse + "/Noeud");
+        Registry registry = LocateRegistry.getRegistry(adresse);
+        Duplication duplication = (Duplication) registry.lookup("Noeud");
         //Duplication duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/Noeud");
         NoeudConfiance noeudConfiance = new NoeudConfiance(adresse, duplication);
         listeNoeudsConfiance.add(noeudConfiance);

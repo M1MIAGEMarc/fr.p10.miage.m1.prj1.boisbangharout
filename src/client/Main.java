@@ -41,7 +41,7 @@ public class Main {
       //Naming.rebind("rmi://" + adresse + "/Noeud", noeud);
       Duplication duplicationStub = (Duplication) UnicastRemoteObject.exportObject(noeud, 0);
       Registry registry = LocateRegistry.createRegistry(1099);
-      registry.rebind("rmi://" + adresse + "/Noeud", duplicationStub);
+      registry.rebind("Noeud", duplicationStub);
       System.out.println("Serveur opérationnel.\n");
 
       
