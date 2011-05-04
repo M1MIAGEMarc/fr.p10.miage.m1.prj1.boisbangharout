@@ -607,12 +607,16 @@ public class IHM {
   }
 
   /**
-   *
+   * Permet de récupérer la saisie au clavier de l'utilisateur. Un contrôle
+   * est aussi sur cette saisie par l'appel de la méthode controler()
+   * 
    * @param message
    *        le message à afficher pour l'invite de commandes
    *
    * @param max
    *        la valeur maximale de la saisie
+   *
+   * @return la valeur saisie par l'utilisateur
    */
   public int saisir(String message, int max) {
 
@@ -634,7 +638,11 @@ public class IHM {
   }
 
   /**
-   *
+   * Effectue le contrôle de la valeur passée en paramètre par rapport à la valeur
+   * max, elle aussi passée en paramètre. Le contrôle échoue si la valeur saisie
+   * est inférieur à 1 ou supérieure à la valeur max. Si le contrôle échoue, la valeur
+   * -1 est retournée
+   * 
    * @param saisie
    *        la valeur saisie par l'utilisateur
    *

@@ -11,15 +11,15 @@ import org.junit.Test;
 
 /**
  *
- * @author maboisba
+ * @author Marc Boisban
+ * @author Kamel Gharout
  */
 public class IHMTest {
 
-  /****************************   Attributs   *********************************/
-  private IHM iHM;
+  private IHM ihm;
 
   public IHMTest() {
-    iHM = new IHM();
+    ihm = new IHM();
   }
 
   @BeforeClass
@@ -31,11 +31,12 @@ public class IHMTest {
   }
 
   /**
-   * Test of saisieControle method, of class IHM.
+   * Test of controler method, of class IHM.
    */
   @Test
-  public void testSaisieControle() {
-    Assert.assertEquals(this, iHM.saisieControle(2));
-
+  public void testControler() {
+    Assert.assertEquals(-1, ihm.controler(5, 3));
+    Assert.assertEquals(-1, ihm.controler(-5, 8));
+    Assert.assertEquals(5, ihm.controler(5, 8));
   }
 }
