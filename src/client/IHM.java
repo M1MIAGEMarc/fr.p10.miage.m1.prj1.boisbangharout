@@ -7,8 +7,10 @@ package client;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.ConnectException;
+import java.rmi.ConnectIOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.InputMismatchException;
@@ -226,12 +228,16 @@ public class IHM {
     //assignerConfidentialite();
     // }
     // while (choix2 == -1);
+   
     if (choix < cpt) {
       choix2 = saisir("Quel degré de confidentialité souhaitez-vous lui assigner ?", 4);
       String nomFichier = noeud.getListeFichiers().get(choix - 1).getNom();
       noeud.assignerConfidentialite(nomFichier, choix2);
       System.out.println("Degré de confidentialité assigné avec succès.");
       revenir();
+    }
+    else {
+        menu();
     }
   }
   //   }
@@ -273,6 +279,7 @@ public class IHM {
     System.out.println("\n1. Retourner au menu principal\n");
     //System.out.println("Appuyer sur n'importe quel chiffre pour ajouter un  noeud de confiance");
     System.out.println("Veuillez saisir l’adresse réseau du nouveau noeud de confiance :");
+
     scanner = new Scanner(System.in);
     adresse = scanner.next();
     //if (choix == 1) {
@@ -318,8 +325,14 @@ public class IHM {
       catch (ConnectException ce) {
         System.out.println("Erreur lors de l'ajout du noeud de confiance : service de noms de la machine distante non trouvé.");
       }
+      catch (ConnectIOException ce) {
+        System.out.println("Erreur lors de l'ajout du noeud de confiance : service de noms de la machine distante non trouvé.");
+      }
       catch (NotBoundException ex) {
         System.out.println("Erreur lors de l'ajout du noeud de confiance : objet distant non trouvé.");
+      }
+      catch (UnknownHostException uhe) {
+          System.out.println("Erreur lors de l'ajout du noeud de confiance : objet inconnu");
       }
       catch (IOException ioe) {
         ioe.printStackTrace();
@@ -676,14 +689,15 @@ public class IHM {
 
     if (valeur < 1 || valeur > max) {
       System.out.println("Erreur de saisie: la valeur saisie doit être comprise entre 1 et " + max + ". Valeur trouvée : " + valeur + ".");
-      System.out.println("\nAppuyer sur entrée pour recommencer la saisie.");
+      //System.out.println("\nAppuyer sur entrée pour recommencer la saisie.");
+      scanner = new Scanner(System.in);
       valeur = -1;
-      try {
-        System.in.read();
-      }
-      catch (IOException ioe) {
-        ioe.printStackTrace();
-      }
+  //    try {
+    //    System.in.read();
+     // }
+     // catch (IOException ioe) {
+      //  ioe.printStackTrace();
+     // }
     }
     return valeur;
   }
