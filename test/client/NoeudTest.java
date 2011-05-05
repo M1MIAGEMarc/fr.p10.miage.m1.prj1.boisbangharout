@@ -452,12 +452,11 @@ public class NoeudTest {
 
       byte[] donnees = new byte[100000];
       //fis = new FileInputStream(file);
-      int nbOctetsLus;
+      int nbOctetsLus = 10000;
       while ((nbOctetsLus = fichier.read(donnees)) > 0) {
       }
 
-
-      noeud.ecrireFichier(dossierFichiersTest + "10.50.56.10", donnees, "Fic1.txt");
+      noeud.ecrireFichier(dossierFichiersTest + "10.50.56.10", donnees, "Fic1.txt", 0, true);
       Assert.assertNotNull(new FileReader(dossierFichiersTest + "10.50.56.10_Fic1.txt"));
     } catch (FileNotFoundException fnfe) {
       fnfe.printStackTrace();
