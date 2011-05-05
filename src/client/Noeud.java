@@ -7,6 +7,8 @@ package client;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -485,20 +487,30 @@ public class Noeud implements Duplication {
   @Override
   public void ecrireFichier(String adresse, File fichier, String nomFichier) {
     boolean FichierCreer = false;
-    String ligne;
     File file = new File(adresse + "_" + nomFichier);
     file.delete();
     try {
       FichierCreer = file.createNewFile();
       FileWriter fw = new FileWriter(file, true);
+      /*
       BufferedReader br = new BufferedReader(new FileReader(fichier));
-      BufferedWriter bw = new BufferedWriter(fw);
+      BufferedWriter bw = new BufferedWriter(fw);*/
+      FileInputStream fis = new FileInputStream(fichier);
+      FileOutputStream fos = new FileOutputStream(file);
 
+      /*
       while ((ligne = br.readLine()) != null) {
         bw.write(ligne);
         bw.flush();
       }
-      bw.close();
+      bw.close();*/
+      
+      byte[] buffer = new byte[1024];
+      int nbOctetsLus;
+
+      while ((nbOctetsLus = fis.read(buffer)) > 0){
+        fos.write(buffer, 0, nbOctetsLus);
+      }
 
       List<String> listeNomsFichiers = new ArrayList<String>();
       if(!listeNomsFichiers.contains(adresse + "_" + nomFichier));
