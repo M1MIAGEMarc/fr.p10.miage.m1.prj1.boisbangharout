@@ -50,6 +50,7 @@ public class Main {
       IHM ihm = new IHM(noeud, scanner);
       ihm.menu();
       System.exit(0);
+
     } catch (AccessException ae) {
       ae.printStackTrace();
     } catch (RemoteException re) {

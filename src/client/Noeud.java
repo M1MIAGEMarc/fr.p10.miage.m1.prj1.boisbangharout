@@ -23,6 +23,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import serveur.Duplication;
 
 /**
@@ -247,68 +249,98 @@ public class Noeud implements Duplication {
     for (Fichier fichier : listeFichiers) {
       if (fichier.getNiveauConfidentialite() != 4) {
         for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
-          try {
-            int offset = 0, tailleMax = 500000;
-            byte[] donnees = new byte[tailleMax];
-            int cpt = 0;
-            boolean debutFichier;
-            if (fichier.getNoeudsConfianceMap().containsKey(noeudConfiance.getAdresse())) {
-              if (fichier.getNoeudsConfianceMap().get(noeudConfiance.getAdresse())) {
-                Duplication duplication = noeudConfiance.getDuplication();
-                if (!duplication.getListeNomsFichiers().contains(adresse + "_" + fichier.getNom())) {
-                  File file = new File(fichier.getNom());
-                  FileInputStream fis;
-                  try {
+          {
+            FileInputStream fis = null;
+            try {
+              int offset;
+              int nbOctetsLus;
+              int tailleMax = 50000000;
+              byte[] donnees = new byte[tailleMax];
+              int cpt = 0;
+              boolean debutFichier;
+              if (fichier.getNoeudsConfianceMap().containsKey(noeudConfiance.getAdresse())) {
+                if (fichier.getNoeudsConfianceMap().get(noeudConfiance.getAdresse())) {
+                  Duplication duplication = noeudConfiance.getDuplication();
+                  if (!duplication.getListeNomsFichiers().contains(adresse + "_" + fichier.getNom())) {
+                    File file = new File(fichier.getNom());
                     fis = new FileInputStream(file);
-                    System.out.println("Duplication");
-                    while ((offset = fis.read(donnees, tailleMax * cpt, tailleMax)) > 0) {
-                      if(cpt == 0)
-                        debutFichier = true;
-                      else
-                        debutFichier = false;
-                      
-                      duplication.ecrireFichier(adresse, donnees, fichier.getNom(), offset, debutFichier);
-                      cpt++;
+                    try {
+                      fis = new FileInputStream(file);
+                      offset = 0;
+                      while ((nbOctetsLus = fis.read(donnees, tailleMax * cpt, tailleMax)) > 0) {
+                        if (cpt == 0) {
+                          debutFichier = true;
+                        }
+                        else {
+                          debutFichier = false;
+                        }
+                        duplication.ecrireFichier(adresse, donnees, fichier.getNom(), offset, nbOctetsLus, debutFichier);
+                        offset += nbOctetsLus;
+                        cpt++;
+                        if (nbOctetsLus < tailleMax) {
+                          break;
+                        }
+                      }
+                    }
+                    catch (FileNotFoundException fnfe) {
+                      fnfe.printStackTrace();
+                    }
+                    catch (IOException ioe) {
+                      ioe.printStackTrace();
                     }
                   }
-                  catch (FileNotFoundException fnfe) {
-                    fnfe.printStackTrace();
-                  }
-                  catch (IOException ioe) {
-                    ioe.printStackTrace();
+                }
+              }
+              else {
+                if (noeudConfiance.getNiveauConfiance() >= fichier.getNiveauConfidentialite()) {
+                  Duplication duplication = noeudConfiance.getDuplication();
+                  if (!duplication.getListeNomsFichiers().contains(adresse + "_" + fichier.getNom())) {
+                    File file = new File(fichier.getNom());
+                    fis = new FileInputStream(file);
+                    try {
+                      fis = new FileInputStream(file);
+                      offset = 0;
+                      while ((nbOctetsLus = fis.read(donnees, tailleMax * cpt, tailleMax)) > 0) {
+                        if (cpt == 0) {
+                          debutFichier = true;
+                        }
+                        else {
+                          debutFichier = false;
+                        }
+                        duplication.ecrireFichier(adresse, donnees, fichier.getNom(), offset, nbOctetsLus, debutFichier);
+                        offset += nbOctetsLus;
+                        cpt++;
+                        if (nbOctetsLus < tailleMax) {
+                          break;
+                        }
+                      }
+                    }
+                    catch (FileNotFoundException fnfe) {
+                      fnfe.printStackTrace();
+                    }
+                    catch (IOException ioe) {
+                      ioe.printStackTrace();
+                    }
                   }
                 }
               }
             }
-            else {
-              if (noeudConfiance.getNiveauConfiance() >= fichier.getNiveauConfidentialite()) {
-                Duplication duplication = noeudConfiance.getDuplication();
-                if (!duplication.getListeNomsFichiers().contains(adresse + "_" + fichier.getNom())) {
-                  File file = new File(fichier.getNom());
-                  FileInputStream fis;
-                  try {
-                    fis = new FileInputStream(file);
-                    while ((offset = fis.read(donnees, tailleMax * cpt, tailleMax)) > 0) {
-                      if(cpt == 0)
-                        debutFichier = true;
-                      else
-                        debutFichier = false;
-                      duplication.ecrireFichier(adresse, donnees, fichier.getNom(), offset, debutFichier);
-                      cpt++;
-                    }
-                  }
-                  catch (FileNotFoundException fnfe) {
-                    fnfe.printStackTrace();
-                  }
-                  catch (IOException ioe) {
-                    ioe.printStackTrace();
-                  }
+            catch (FileNotFoundException ex) {
+              Logger.getLogger(Noeud.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (RemoteException re) {
+              re.printStackTrace();
+            }
+            finally {
+              try {
+                if (fis != null) {
+                  fis.close();
                 }
               }
+              catch (IOException ex) {
+                Logger.getLogger(Noeud.class.getName()).log(Level.SEVERE, null, ex);
+              }
             }
-          }
-          catch (RemoteException re) {
-            re.printStackTrace();
           }
         }
       }
@@ -453,7 +485,14 @@ public class Noeud implements Duplication {
             }
 
             if (!trouve) {
-              ecrireFichierPerdu(nouveauNomFichier, noeudConfiance.getDuplication().extraireDonnees(nomFichier));
+              //byte[] donnees = ecrireFichierPerdu(nouveauNomFichier, noeudConfiance.getDuplication().extraireDonnees(nomFichier));
+              System.out.println("nomFichier : " + nomFichier);
+              System.out.println("nouveauNomFichier : " + nouveauNomFichier);
+              byte[] donnees = noeudConfiance.getDuplication().extraireDonnees(nomFichier);
+              System.out.println("nomFichier : " + nomFichier);
+              System.out.println("nouveauNomFichier : " + nouveauNomFichier);
+              System.out.println("taille donnees recuperees = " + donnees.length);
+              ecrireFichierPerdu(nouveauNomFichier, donnees);
               listeNomsFichiers.add(nouveauNomFichier);
             }
           }
@@ -477,25 +516,31 @@ public class Noeud implements Duplication {
    * @param fichier
    *        Le fichier à ecrire sur la machine cliente
    */
-  public void ecrireFichierPerdu(String nomFichier, File fichier) {
+  public void ecrireFichierPerdu(String nomFichier, byte[] donnees) {
 
     String ligne;
     File file = new File(nomFichier);
     //On supprime le fichier s'il existe déjà pour l'écrire ensuite (cela évite d'écrire plusieurs fois les même données dans le fichier)
     file.delete();
+    int i;
+    /*
+    for (i = 0; i < donnees.length; i++) {
+      if(donnees[i] == (byte)0)
+        break;
+    }*/
+    //System.out.println("i = " + i);
+
     try {
-
       file.createNewFile();
-      FileWriter fw = new FileWriter(file, true);
-      BufferedWriter bw = new BufferedWriter(fw);
-      BufferedReader donnees = new BufferedReader(new FileReader(fichier));
-
-      while ((ligne = donnees.readLine()) != null) {
-        bw.write(ligne);
-        bw.flush();
-      }
-      bw.close();
-
+      FileOutputStream fos = new FileOutputStream(file);
+      /*
+      for (int j = 0; j < donnees.length; j++) {
+        if(donnees[j] != (byte)0)
+          fos.write(donnees[j]);
+      }*/
+      fos.write(donnees);
+      fos.flush();
+      fos.close();
     }
     catch (IOException ioe) {
       ioe.printStackTrace();
@@ -520,14 +565,15 @@ public class Noeud implements Duplication {
    *
    */
   @Override
-  public void ecrireFichier(String adresse, byte[] donnees, String nomFichier, int offset, boolean debutFichier) {
+  public void ecrireFichier(String adresse, byte[] donnees, String nomFichier, int offset, int nbOctetsLus, boolean debutFichier) {
     boolean FichierCreer = false;
     File nouveauFichier = new File(adresse + "_" + nomFichier);
     nouveauFichier.delete();
     try {
-      if (debutFichier)
+      if (debutFichier) {
         FichierCreer = nouveauFichier.createNewFile();
-      
+      }
+
       FileWriter fw = new FileWriter(nouveauFichier, true);
       /*
       BufferedReader br = new BufferedReader(new FileReader(fichier));
@@ -541,9 +587,12 @@ public class Noeud implements Duplication {
       bw.flush();
       }
       bw.close();*/
-      System.out.println("offset :" + offset);
-      System.out.println("donnees.length :" + donnees.length);
-      fos.write(donnees, offset, donnees.length);
+      byte[] donnes1 = new byte[nbOctetsLus];
+
+      for (int i = 0; i < donnes1.length; i++) {
+        donnes1[i] = donnees[i];
+      }
+      fos.write(donnes1, offset, donnes1.length - 1);
       fos.close();
       fw.close();
       List<String> listeNomsFichiers = new ArrayList<String>();
@@ -591,10 +640,47 @@ public class Noeud implements Duplication {
    *         en paramètre
    */
   @Override
-  public File extraireDonnees(String nomFichier) {
-    File fichier;
-    fichier = new File(nomFichier);
+  public byte[] extraireDonnees(String nomFichier) {
+    System.out.println("Extraction des données du fichier + '" + nomFichier + "'");
+    int nbOctetsLus, tailleMax = 50000000;
+    byte[] donneesMax = new byte[tailleMax];
+    byte[] donneesRetournees = new byte[0];
+    
+    FileInputStream fis = null;
+    try {
+      fis = new FileInputStream(nomFichier);
 
-    return fichier;
+      while ((nbOctetsLus = fis.read(donneesMax)) > 0) {
+        System.out.println("nbOctetsLus = " + nbOctetsLus + " pour le fichier " + nomFichier);
+        //duplication.ecrireFichier(adresse, donneesMax, fichier.getNom(), offset, nbOctetsLus, debutFichier);
+        //offset += nbOctetsLus;
+        if(nbOctetsLus != -1)
+          donneesRetournees = new byte[nbOctetsLus];
+        if (nbOctetsLus < tailleMax) {
+          break;
+        }        
+      }
+
+      
+      for (int i = 0; i < donneesRetournees.length - 1; i++) {
+        donneesRetournees[i] = donneesMax[i];
+      }
+    }
+    catch (FileNotFoundException ex) {
+      Logger.getLogger(Noeud.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    catch (IOException ex) {
+      Logger.getLogger(Noeud.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    finally {
+      try {
+        fis.close();
+      }
+      catch (IOException ex) {
+        Logger.getLogger(Noeud.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    }
+
+    return donneesRetournees;
   }
 }

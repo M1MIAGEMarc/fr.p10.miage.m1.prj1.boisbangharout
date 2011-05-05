@@ -391,7 +391,9 @@ public class NoeudTest {
       Registry registry = LocateRegistry.getRegistry(adresse);
       Duplication duplication = (Duplication) registry.lookup("Noeud");
       listeNoeudsConfiance.add(new NoeudConfiance(adresse, duplication));
+      System.out.println("======= TEST RECUPERERFICHIERSPERDUS========= \n");
       noeud.recupererFichiersPerdus();
+      System.out.println("\n========== FIN TEST RECUPERERFICHIERSPERDUS ============ \n");
       Assert.assertNotNull(new FileReader(nomFichier));
       //System.out.println(adresse + "_" + nomFichier);
     }
@@ -425,8 +427,11 @@ public class NoeudTest {
     BufferedReader br1;
     try {
       String nomFichier = "Fic3.txt";
-      File fichier = new File(dossierFichiersTest + nomFichier);
-      noeud.ecrireFichierPerdu(dossierFichiersTest + "(2)-" + nomFichier, fichier);
+      //File fichier = new File(dossierFichiersTest + nomFichier);
+      FileInputStream fis = new FileInputStream(dossierFichiersTest + nomFichier);
+      byte[] donnees = new byte[500000];
+      fis.read(donnees);
+      noeud.ecrireFichierPerdu(dossierFichiersTest + "(2)-" + nomFichier, donnees);
       // Le "(2)-" sert simplement à différencier les fichiers en sortie pour les tests
       FileReader fileReader = new FileReader("(2)-" + nomFichier);
     }
@@ -450,18 +455,19 @@ public class NoeudTest {
     try {
       fichier = new FileInputStream(dossierFichiersTest + "Fic1.txt");
 
-      byte[] donnees = new byte[100000];
+      byte[] donnees = new byte[100];
       //fis = new FileInputStream(file);
-      int nbOctetsLus = 10000;
-      while ((nbOctetsLus = fichier.read(donnees)) > 0) {
-      }
+      int nbOctetsLus = 10;
+      nbOctetsLus = fichier.read(donnees);
 
-      noeud.ecrireFichier(dossierFichiersTest + "10.50.56.10", donnees, "Fic1.txt", 0, true);
+      noeud.ecrireFichier(dossierFichiersTest + "10.50.56.10", donnees, "Fic1.txt", 0, nbOctetsLus, true);
       Assert.assertNotNull(new FileReader(dossierFichiersTest + "10.50.56.10_Fic1.txt"));
-    } catch (FileNotFoundException fnfe) {
+    }
+    catch (FileNotFoundException fnfe) {
       fnfe.printStackTrace();
       Assert.fail();
-    } catch (IOException ex) {
+    }
+    catch (IOException ex) {
       Logger.getLogger(NoeudTest.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
@@ -494,28 +500,25 @@ public class NoeudTest {
   @Test
   public void testExtraireDonnees() {
     String dossierFichiersTest = "Fichiers_Test\\testExtraireDonneesFichier()\\";
-    try {
-      File fichier = noeud.extraireDonnees(dossierFichiersTest + "10.50.56.11_Fic1.dat");
+      //File fichier = noeud.extraireDonnees(dossierFichiersTest + "10.50.56.11_Fic1.dat");
+    byte[] donnees = noeud.extraireDonnees(dossierFichiersTest + "10.50.56.11_Fic1.dat");
+    System.out.println("donnees.length = " + donnees.length);
 
-      if (!fichier.exists()) {
-        Assert.fail();
+    /*
+    for (int i = 0; i < 4; i++) { // Le fichier à tester contient 4 caractères
+      Assert.assertFalse(donnees[i] == (byte)0);
+    }*/
 
-        // Test avec un fichier vide en entrée, l'extraction ne doit donc pas renvoyer de données
+    
+    // Test avec un fichier vide en entrée, l'extraction ne doit donc pas renvoyer de données
+    byte[] donnees2 = noeud.extraireDonnees(dossierFichiersTest + "10.50.56.11_Fic2.dat");
+    //BufferedReader br = new BufferedReader(new FileReader(fichier));
+    System.out.println("donnees2.length" + donnees2.length);
 
-      }
-      fichier = noeud.extraireDonnees(dossierFichiersTest + "10.50.56.11_Fic2.dat");
-      BufferedReader br = new BufferedReader(new FileReader(fichier));
-      if (br.read() > 0) {
-        Assert.fail();
-
-
-      }
+    for (int i = 0; i < donnees2.length; i++) {
+      Assert.assertFalse(donnees2[i] != (byte)0);
     }
-    catch (FileNotFoundException ex) {
-      Assert.fail();
-    }
-    catch (IOException ioe) {
-      Assert.fail();
-    }
+    
   }
+
 }

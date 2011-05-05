@@ -38,7 +38,8 @@ public class IHM {
     try {
       noeud = new Noeud();
       scanner = new Scanner(System.in);
-    } catch (RemoteException re) {
+    }
+    catch (RemoteException re) {
       re.printStackTrace();
     }
   }
@@ -135,7 +136,8 @@ public class IHM {
         case 8:
           break;
       }
-    } while (choix != 8);
+    }
+    while (choix != 8);
 
 
     System.out.println("Sortie du menu général.");
@@ -202,6 +204,7 @@ public class IHM {
     }*/
     //   choix = saisieControle(cpt);
     choix = saisir("\nVeuillez sélectionner le fichier dont vous voulez assigner un degré de confidentialité :", cpt);
+
     //}
     //while (choix == -1);
         /*
@@ -223,11 +226,13 @@ public class IHM {
     //assignerConfidentialite();
     // }
     // while (choix2 == -1);
-    choix2 = saisir("Quel degré de confidentialité souhaitez-vous lui assigner ?", 4);
-    String nomFichier = noeud.getListeFichiers().get(choix - 1).getNom();
-    noeud.assignerConfidentialite(nomFichier, choix2);
-    System.out.println("Degré de confidentialité assigné avec succès.");
-    revenir();
+    if (choix < cpt) {
+      choix2 = saisir("Quel degré de confidentialité souhaitez-vous lui assigner ?", 4);
+      String nomFichier = noeud.getListeFichiers().get(choix - 1).getNom();
+      noeud.assignerConfidentialite(nomFichier, choix2);
+      System.out.println("Degré de confidentialité assigné avec succès.");
+      revenir();
+    }
   }
   //   }
   // while (choix < cpt);
@@ -286,31 +291,36 @@ public class IHM {
           noeud.assignerConfiance(adresse, choix);
           System.out.println("Noeud de confiance ajouté avec succès.\n");
           noeud.dupliquerFichiers();
-        } else {
+        }
+        else {
           System.out.println("Noeud de confiance déjà présent dans la liste.");
           System.out.println("Aucun ajout effectué.\n");
 
-         System.out.println("Voulez-vous modifier le degrès de confiance du noeud de confiance?");
-         System.out.println("1. Oui");
-         System.out.println("2. Non");
-         choix2 = saisir("", 2);
-         if (choix2==1) {
-             choix = saisir("Quel degré de confiance souhaitez-vous lui assigner ?", 3);
-         //  }
-         // while (choix == -1);
+          System.out.println("Voulez-vous modifier le degrès de confiance du noeud de confiance?");
+          System.out.println("1. Oui");
+          System.out.println("2. Non");
+          choix2 = saisir("", 2);
+          if (choix2 == 1) {
+            choix = saisir("Quel degré de confiance souhaitez-vous lui assigner ?", 3);
+            //  }
+            // while (choix == -1);
 
-         noeud.assignerConfiance(adresse, choix);
-         System.out.println("Degrès de confiance modifié avec succès.\n");
-         noeud.dupliquerFichiers();
-         }
+            noeud.assignerConfiance(adresse, choix);
+            System.out.println("Degrès de confiance modifié avec succès.\n");
+            noeud.dupliquerFichiers();
+          }
         }
-      } catch (MalformedURLException mue) {
+      }
+      catch (MalformedURLException mue) {
         System.out.println("Erreur lors de l'ajout du noeud de confiance : adresse IP non valide.");
-      } catch (ConnectException ce) {
+      }
+      catch (ConnectException ce) {
         System.out.println("Erreur lors de l'ajout du noeud de confiance : service de noms de la machine distante non trouvé.");
-      } catch (NotBoundException ex) {
+      }
+      catch (NotBoundException ex) {
         System.out.println("Erreur lors de l'ajout du noeud de confiance : objet distant non trouvé.");
-      } catch (IOException ioe) {
+      }
+      catch (IOException ioe) {
         ioe.printStackTrace();
       }
 
@@ -467,7 +477,8 @@ public class IHM {
               if (!listeAutorise.contains(currentEntry.getKey())) {
                 listeAutorise.add(currentEntry.getKey());
               }
-            } else {
+            }
+            else {
               if (listeAutorise.contains(currentEntry.getKey())) {
                 listeAutorise.remove(currentEntry.getKey());
               }
@@ -477,7 +488,8 @@ public class IHM {
           if (listeAutorise.isEmpty()) {
             System.out.println("\nAucun noeud de confiance autorisé spécifiquement pour ce fichier.");
             revenir();
-          } else {
+          }
+          else {
             for (String adresse : listeAutorise) {
               cpt += 1;
               System.out.println("   " + cpt + ". " + adresse);
@@ -508,7 +520,8 @@ public class IHM {
              */
 
           }
-        } else if (choix2 == 1) {
+        }
+        else if (choix2 == 1) {
 
 
           //do {
@@ -535,7 +548,8 @@ public class IHM {
               if (!listeAutorise.contains(currentEntry.getKey())) {
                 listeAutorise.add(currentEntry.getKey());
               }
-            } else {
+            }
+            else {
               if (listeAutorise.contains(currentEntry.getKey())) {
                 listeAutorise.remove(currentEntry.getKey());
               }
@@ -544,7 +558,8 @@ public class IHM {
           if (listeAutorise.isEmpty()) {
             System.out.println("\nAucun noeud de confiance non-autorisé spécifiquement pour ce fichier.");
             revenir();
-          } else {
+          }
+          else {
             for (String adresse : listeAutorise) {
               cpt += 1;
               System.out.println("   " + cpt + ". " + adresse);
@@ -572,7 +587,8 @@ public class IHM {
             }
           }
         }
-      } while (choix != 1 && choix != 2 && choix != 3);
+      }
+      while (choix != 1 && choix != 2 && choix != 3);
     }
   }
 
@@ -592,7 +608,7 @@ public class IHM {
    */
   public void recuperer() {
     List<String> listeNomsFichier = noeud.recupererFichiersPerdus();
-    
+
     if (listeNomsFichier.isEmpty()) {
       System.out.println("Aucun fichier récupéré");
     }
@@ -629,11 +645,13 @@ public class IHM {
         System.out.println(message);
         saisie = scanner.nextInt();
         controle = controler(saisie, max);
-      } catch (InputMismatchException ime) {
+      }
+      catch (InputMismatchException ime) {
         System.out.println("Erreur de saisie: la valeur saisie doit être numérique.");
         scanner = new Scanner(System.in);
       }
-    } while (controle == -1);
+    }
+    while (controle == -1);
 
     return saisie;
   }
@@ -661,7 +679,8 @@ public class IHM {
       valeur = -1;
       try {
         System.in.read();
-      } catch (IOException ioe) {
+      }
+      catch (IOException ioe) {
         ioe.printStackTrace();
       }
     }
@@ -676,7 +695,8 @@ public class IHM {
     System.out.println("\nAppuyer sur entrée revenir au menu principal.");
     try {
       System.in.read();
-    } catch (IOException ioe) {
+    }
+    catch (IOException ioe) {
       ioe.printStackTrace();
     }
   }

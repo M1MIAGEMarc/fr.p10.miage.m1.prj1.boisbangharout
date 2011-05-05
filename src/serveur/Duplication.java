@@ -42,7 +42,7 @@ public interface Duplication extends Remote{
    *         Le nom du fichier dont on souhaite écrire le contenu
    *
    */
-  public void ecrireFichier(String adresse, byte[] donnees, String nomFichier, int offset, boolean debutFichier) throws RemoteException;
+  public void ecrireFichier(String adresse, byte[] donnees, String nomFichier, int offset, int nbOctetsLus, boolean debutFichier) throws RemoteException;
 
   
   /**
@@ -68,6 +68,6 @@ public interface Duplication extends Remote{
    * @return Les données extraites du fichier dont le nom est passé
    *         en paramètre
    */
-  public File extraireDonnees(String nomFichier) throws RemoteException;
+  public byte[] extraireDonnees(String nomFichier) throws RemoteException;
 
 }
