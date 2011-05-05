@@ -42,7 +42,7 @@ public interface Duplication extends Remote{
    *         Le nom du fichier dont on souhaite écrire le contenu
    *
    */
-  public void ecrireFichier(String adresse, File fichier, String nomFichier) throws RemoteException;
+  public void ecrireFichier(String adresse, byte[] donnees, String nomFichier) throws RemoteException;
 
   
   /**

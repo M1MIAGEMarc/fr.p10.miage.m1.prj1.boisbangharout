@@ -3,14 +3,14 @@
  * and open the template in the editor.
  */
 
-import client.NoeudClientTest;
+import client.IHMTest;
+import client.NoeudTest;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import serveur.NoeudServeurTest;
 
 /**
  * Classe exécutant tous les tests unitaires du projet
@@ -19,7 +19,7 @@ import serveur.NoeudServeurTest;
  * @author Kamel Gharout
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({NoeudServeurTest.class, NoeudClientTest.class})
+@Suite.SuiteClasses({NoeudTest.class, IHMTest.class})
 public class Tests {
 
   @BeforeClass

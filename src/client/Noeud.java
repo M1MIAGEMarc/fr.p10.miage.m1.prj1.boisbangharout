@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -20,13 +21,9 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import serveur.Duplication;
-import serveur.NoeudServeur;
 
 /**
  * Cette classe a pour but de modéliser la machine cliente
@@ -255,12 +252,26 @@ public class Noeud implements Duplication {
       if (fichier.getNiveauConfidentialite() != 4) {
         for (NoeudConfiance noeudConfiance : listeNoeudsConfiance) {
           try {
+            byte[] donnees = new byte[1000000];
+            int nbOctetsLus = 0;
             if (fichier.getNoeudsConfianceMap().containsKey(noeudConfiance.getAdresse())) {
               if (fichier.getNoeudsConfianceMap().get(noeudConfiance.getAdresse())) {
                 Duplication duplication = noeudConfiance.getDuplication();
                 if (!duplication.getListeNomsFichiers().contains(adresse + "_" + fichier.getNom())) {
                   File file = new File(fichier.getNom());
-                  duplication.ecrireFichier(adresse, file, fichier.getNom());
+                  FileInputStream fis;
+                  try {
+                    fis = new FileInputStream(file);
+                    while ((nbOctetsLus = fis.read(donnees)) > 0){}
+                  }
+                  catch (FileNotFoundException fnfe) {
+                    fnfe.printStackTrace();
+                  }
+                  catch(IOException ioe){
+                    ioe.printStackTrace();
+                  }
+                  //byte[] donnees = new byte[10000000];
+                  duplication.ecrireFichier(adresse, donnees, fichier.getNom());
                 }
               }
             } else {
@@ -268,7 +279,19 @@ public class Noeud implements Duplication {
                 Duplication duplication = noeudConfiance.getDuplication();
                 if (!duplication.getListeNomsFichiers().contains(adresse + "_" + fichier.getNom())) {
                   File file = new File(fichier.getNom());
-                  duplication.ecrireFichier(adresse, file, fichier.getNom());
+                                    FileInputStream fis;
+                  try {
+                    fis = new FileInputStream(file);
+                    while ((nbOctetsLus = fis.read(donnees)) > 0){}
+                  }
+                  catch (FileNotFoundException fnfe) {
+                    fnfe.printStackTrace();
+                  }
+                  catch(IOException ioe){
+                    ioe.printStackTrace();
+                  }
+                  //byte[] donnees = new byte[10000000];
+                  duplication.ecrireFichier(adresse, donnees, fichier.getNom());
                 }
               }
             }
@@ -485,18 +508,18 @@ public class Noeud implements Duplication {
    *
    */
   @Override
-  public void ecrireFichier(String adresse, File fichier, String nomFichier) {
+  public void ecrireFichier(String adresse, byte[] donnees, String nomFichier) {
     boolean FichierCreer = false;
-    File file = new File(adresse + "_" + nomFichier);
-    file.delete();
+    File nouveauFichier = new File(adresse + "_" + nomFichier);
+    nouveauFichier.delete();
     try {
-      FichierCreer = file.createNewFile();
-      FileWriter fw = new FileWriter(file, true);
+      FichierCreer = nouveauFichier.createNewFile();
+      FileWriter fw = new FileWriter(nouveauFichier, true);
       /*
       BufferedReader br = new BufferedReader(new FileReader(fichier));
-      BufferedWriter bw = new BufferedWriter(fw);*/
-      FileInputStream fis = new FileInputStream(fichier);
-      FileOutputStream fos = new FileOutputStream(file);
+      BufferedWriter bw = new BufferedWriter(fw);
+       * */
+      FileOutputStream fos = new FileOutputStream(nouveauFichier);
 
       /*
       while ((ligne = br.readLine()) != null) {
@@ -504,20 +527,16 @@ public class Noeud implements Duplication {
         bw.flush();
       }
       bw.close();*/
-      
-      byte[] buffer = new byte[1024];
-      int nbOctetsLus;
 
-      while ((nbOctetsLus = fis.read(buffer)) > 0){
-        fos.write(buffer, 0, nbOctetsLus);
-      }
-
+      fos.write(donnees);
+      fos.close();
+      fw.close();
       List<String> listeNomsFichiers = new ArrayList<String>();
       if(!listeNomsFichiers.contains(adresse + "_" + nomFichier));
         listeNomsFichiers.add(adresse + "_" + nomFichier);
       //System.out.println("Fichier '" + adresse + "_" + nomFichier + "' ajouté.");
-    } catch (IOException ex) {
-      Logger.getLogger(NoeudServeur.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
     }
   }
 

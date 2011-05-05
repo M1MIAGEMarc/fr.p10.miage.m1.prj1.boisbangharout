@@ -22,6 +22,7 @@ import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import junit.framework.Assert;
 import java.io.File;
+import java.io.FileInputStream;
 import java.rmi.AccessException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -327,7 +328,7 @@ public class NoeudTest {
           int indexSeparateur = nomFichier.indexOf("_");
           if (nomFichier.contains("_")
                   && nomFichier.substring(0, indexSeparateur).equals(adresse)
-                  && !listeNomFichiersClients.contains(nomFichier.substring(adresse.length() + 1, nomFichier.length()))){
+                  && !listeNomFichiersClients.contains(nomFichier.substring(adresse.length() + 1, nomFichier.length()))) {
             //System.out.println("nomfichier" + nomFichier);
             fichiersSauves.add(nomFichier);
           }
@@ -444,16 +445,25 @@ public class NoeudTest {
   @Test
   public void testEcrireFichier() {
     String dossierFichiersTest = "Fichiers_Test\\testEcrireFichier()\\";
-    File fichier;
+    FileInputStream fichier;
 
     try {
-      fichier = new File(dossierFichiersTest + "Fic1.txt");
-      noeud.ecrireFichier(dossierFichiersTest + "10.50.56.10", fichier, "Fic1.txt");
+      fichier = new FileInputStream(dossierFichiersTest + "Fic1.txt");
+
+      byte[] donnees = new byte[100000];
+      //fis = new FileInputStream(file);
+      int nbOctetsLus;
+      while ((nbOctetsLus = fichier.read(donnees)) > 0) {
+      }
+
+
+      noeud.ecrireFichier(dossierFichiersTest + "10.50.56.10", donnees, "Fic1.txt");
       Assert.assertNotNull(new FileReader(dossierFichiersTest + "10.50.56.10_Fic1.txt"));
-    }
-    catch (FileNotFoundException fnfe) {
+    } catch (FileNotFoundException fnfe) {
       fnfe.printStackTrace();
       Assert.fail();
+    } catch (IOException ex) {
+      Logger.getLogger(NoeudTest.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
 
@@ -492,7 +502,7 @@ public class NoeudTest {
         Assert.fail();
 
         // Test avec un fichier vide en entrée, l'extraction ne doit donc pas renvoyer de données
-        
+
       }
       fichier = noeud.extraireDonnees(dossierFichiersTest + "10.50.56.11_Fic2.dat");
       BufferedReader br = new BufferedReader(new FileReader(fichier));
