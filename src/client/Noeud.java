@@ -261,7 +261,7 @@ public class Noeud implements Duplication {
               if (fichier.getNoeudsConfianceMap().containsKey(noeudConfiance.getAdresse())) {
                 if (fichier.getNoeudsConfianceMap().get(noeudConfiance.getAdresse())) {
                   Duplication duplication = noeudConfiance.getDuplication();
-                  if (!duplication.getListeNomsFichiers().contains(adresse + "_" + fichier.getNom())) {
+                  //if (!duplication.getListeNomsFichiers().contains(adresse + "_" + fichier.getNom())) {
                     File file = new File(fichier.getNom());
                     fis = new FileInputStream(file);
                     try {
@@ -288,13 +288,13 @@ public class Noeud implements Duplication {
                     catch (IOException ioe) {
                       ioe.printStackTrace();
                     }
-                  }
+                  //}
                 }
               }
               else {
                 if (noeudConfiance.getNiveauConfiance() >= fichier.getNiveauConfidentialite()) {
                   Duplication duplication = noeudConfiance.getDuplication();
-                  if (!duplication.getListeNomsFichiers().contains(adresse + "_" + fichier.getNom())) {
+                  //if (!duplication.getListeNomsFichiers().contains(adresse + "_" + fichier.getNom())) {
                     File file = new File(fichier.getNom());
                     fis = new FileInputStream(file);
                     try {
@@ -321,15 +321,12 @@ public class Noeud implements Duplication {
                     catch (IOException ioe) {
                       ioe.printStackTrace();
                     }
-                  }
+                  //}
                 }
               }
             }
             catch (FileNotFoundException ex) {
               Logger.getLogger(Noeud.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (RemoteException re) {
-              re.printStackTrace();
             }
             finally {
               try {
@@ -587,7 +584,7 @@ public class Noeud implements Duplication {
       for (int i = 0; i < donnes1.length; i++) {
         donnes1[i] = donnees[i];
       }
-      fos.write(donnes1, offset, donnes1.length - 1);
+      fos.write(donnes1, offset, donnes1.length);
       fos.close();
       fw.close();
       List<String> listeNomsFichiers = new ArrayList<String>();
@@ -651,7 +648,7 @@ public class Noeud implements Duplication {
           donneesRetournees = new byte[nbOctetsLus];
         if (nbOctetsLus < tailleMax) {
           break;
-        }        
+        } 
       }
 
       
