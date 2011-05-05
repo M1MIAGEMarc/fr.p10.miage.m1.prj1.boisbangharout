@@ -281,6 +281,7 @@ public class IHM {
         //System.out.println("Veuillez saisir l’adresse réseau du nouveau noeud de confiance :");
         System.out.println("Tentative de connexion à la machine " + adresse + " ...\n");
         if (noeud.ajouterNoeudConfiance(adresse)) {
+          System.out.println("Connexion effectuée.");
           // do {
           //  System.out.println("Quel degré de confiance souhaitez-vous lui assigner ?");
           //choix = scanner.nextInt();

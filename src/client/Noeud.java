@@ -486,12 +486,7 @@ public class Noeud implements Duplication {
 
             if (!trouve) {
               //byte[] donnees = ecrireFichierPerdu(nouveauNomFichier, noeudConfiance.getDuplication().extraireDonnees(nomFichier));
-              System.out.println("nomFichier : " + nomFichier);
-              System.out.println("nouveauNomFichier : " + nouveauNomFichier);
               byte[] donnees = noeudConfiance.getDuplication().extraireDonnees(nomFichier);
-              System.out.println("nomFichier : " + nomFichier);
-              System.out.println("nouveauNomFichier : " + nouveauNomFichier);
-              System.out.println("taille donnees recuperees = " + donnees.length);
               ecrireFichierPerdu(nouveauNomFichier, donnees);
               listeNomsFichiers.add(nouveauNomFichier);
             }
@@ -641,7 +636,6 @@ public class Noeud implements Duplication {
    */
   @Override
   public byte[] extraireDonnees(String nomFichier) {
-    System.out.println("Extraction des données du fichier + '" + nomFichier + "'");
     int nbOctetsLus, tailleMax = 50000000;
     byte[] donneesMax = new byte[tailleMax];
     byte[] donneesRetournees = new byte[0];
@@ -651,7 +645,6 @@ public class Noeud implements Duplication {
       fis = new FileInputStream(nomFichier);
 
       while ((nbOctetsLus = fis.read(donneesMax)) > 0) {
-        System.out.println("nbOctetsLus = " + nbOctetsLus + " pour le fichier " + nomFichier);
         //duplication.ecrireFichier(adresse, donneesMax, fichier.getNom(), offset, nbOctetsLus, debutFichier);
         //offset += nbOctetsLus;
         if(nbOctetsLus != -1)

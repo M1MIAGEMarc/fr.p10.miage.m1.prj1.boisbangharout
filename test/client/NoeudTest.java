@@ -343,7 +343,6 @@ public class NoeudTest {
         Assert.assertNotNull(new FileReader(adresse + "_" + listeFichiers.get(0).getNom()));
         List<String> listeNomFichiers = duplication.getListeNomsFichiers();
         for (String fichierSauve : fichiersSauves) {
-          System.out.println("fichierSauve" + fichierSauve);
           Assert.assertFalse(listeNomFichiers.contains(fichierSauve));
         }
         listeNomFichiers.contains("");
