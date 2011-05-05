@@ -254,7 +254,7 @@ public class IHM {
    * </ul>
    */
   public void ajouterNoeudConfiance() {
-    int choix;
+    int choix, choix2;
     String adresse;
     System.out.println("Ajout d’un noeud de confiance");
     System.out.println("====================================\n");
@@ -289,6 +289,20 @@ public class IHM {
         } else {
           System.out.println("Noeud de confiance déjà présent dans la liste.");
           System.out.println("Aucun ajout effectué.\n");
+
+         System.out.println("Voulez-vous modifier le degrès de confiance du noeud de confiance?");
+         System.out.println("1. Oui");
+         System.out.println("2. Non");
+         choix2 = saisir("", 2);
+         if (choix2==1) {
+             choix = saisir("Quel degré de confiance souhaitez-vous lui assigner ?", 3);
+         //  }
+         // while (choix == -1);
+
+         noeud.assignerConfiance(adresse, choix);
+         System.out.println("Degrès de confiance modifié avec succès.\n");
+         noeud.dupliquerFichiers();
+         }
         }
       } catch (MalformedURLException mue) {
         System.out.println("Erreur lors de l'ajout du noeud de confiance : adresse IP non valide.");
@@ -594,43 +608,6 @@ public class IHM {
   }
 
   /**
-   * Récupère la saisie du client, effectue un contrôle dessus en fonction des valeurs
-   * passées en paramètre et renvoie la valeur saisie si elle passe le contrôle avec succès,
-   * renvoie -1 sinon.
-   *
-   * Pour passer le contrôle avec succès, la valeur doit être numérique et comprise
-   * entre 1 et le paramètre max (inclus)
-   *
-   * @param max
-   *        la valeur maximale qui peut être saisie
-   *
-   * @return la valeur saisie par l'utilisateur, -1 si elle n'est pas conforme
-   */
-  public int saisieControle(int max) {
-    int choix = 0;
-
-    try {
-      choix = scanner.nextInt();
-
-      if (choix < 1 || choix > max) {
-        System.out.println("Erreur de saisie: la valeur saisie doit être comprise entre 1 et " + max + ". Valeur trouvée : " + choix + ".");
-        System.out.println("\nAppuyer sur entrée pour recommencer la saisie.");
-        choix = -1;
-        try {
-          System.in.read();
-        } catch (IOException ioe) {
-          ioe.printStackTrace();
-        }
-      }
-    } catch (InputMismatchException ime) {
-      System.out.println("La valeur saisie doit être numérique.");
-      choix = -1;
-    }
-
-    return choix;
-  }
-
-  /**
    * Permet de récupérer la saisie au clavier de l'utilisateur. Un contrôle
    * est aussi sur cette saisie par l'appel de la méthode controler()
    *
@@ -648,12 +625,13 @@ public class IHM {
     int controle = -1;
 
     do {
-      System.out.println(message);
       try {
+        System.out.println(message);
         saisie = scanner.nextInt();
         controle = controler(saisie, max);
       } catch (InputMismatchException ime) {
-        System.out.println("La valeur saisie doit être numérique.");
+        System.out.println("Erreur de saisie: la valeur saisie doit être numérique.");
+        scanner = new Scanner(System.in);
       }
     } while (controle == -1);
 
