@@ -24,6 +24,8 @@ import junit.framework.Assert;
 import java.io.File;
 import java.rmi.AccessException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -100,8 +102,8 @@ public class NoeudTest {
     List<NoeudConfiance> listeNoeudsConfiance = noeud.getListeNoeudsConfiance();
     try {
       InetAddress adress = Inet4Address.getLocalHost();
-      adresse = adress.getHostAddress();
-      //adresse = "172.19.1.37";
+      //adresse = adress.getHostAddress();
+      adresse = "172.19.1.37";
       noeud.ajouterNoeudConfiance(adresse);
       Assert.assertEquals(adresse, listeNoeudsConfiance.get(0).getAdresse());
     }
@@ -171,7 +173,9 @@ public class NoeudTest {
         fileReader = new FileReader(listeFichiers.get(0).getNom());
         BufferedReader br = new BufferedReader(fileReader);
 
-        Duplication duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/Noeud");
+        //Duplication duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/Noeud");
+        Registry registry = LocateRegistry.getRegistry(adresse);
+        Duplication duplication = (Duplication) registry.lookup("Noeud");
         NoeudConfiance noeud2 = new NoeudConfiance(adresse, duplication);
         listeFichiers.get(0).setNiveauConfidentialite(1);
         noeud2.setNiveauConfiance(1);
@@ -186,9 +190,6 @@ public class NoeudTest {
             Assert.assertTrue(listeNomFichiers.contains(adresse + "_" + listeFichiers.get(0).getNom()));
           }
         }
-      }
-      catch (MalformedURLException ex) {
-        Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
       }
       catch (FileNotFoundException fnfe) {
         fnfe.printStackTrace();
@@ -298,14 +299,16 @@ public class NoeudTest {
   public void testNettoyerFichiersDupliques() {
 
     try {
-      Duplication duplication;
+      //Duplication duplication;
       FileReader fileReader = null;
       String adresse = noeud.getAdresse();
       //String adresseDistante = "192.168.19.4";
       List<Fichier> listeFichiers = noeud.getListeFichiers();
       List<NoeudConfiance> listeNoeudsConfiance = noeud.getListeNoeudsConfiance();
 
-      duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/Noeud");
+      //duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/Noeud");
+      Registry registry = LocateRegistry.getRegistry(adresse);
+      Duplication duplication = (Duplication) registry.lookup("Noeud");
       listeNoeudsConfiance.add(new NoeudConfiance(adresse, duplication));
       //listeFichiers.add(new Fichier("Fic0.txt"));
       //listeFichiers.add(new Fichier("Fic1.txt"));
@@ -346,9 +349,6 @@ public class NoeudTest {
       }
 
     }
-    catch (MalformedURLException ex) {
-      Logger.getLogger(NoeudClientTest.class.getName()).log(Level.SEVERE, null, ex);
-    }
     catch (NotBoundException nbe) {
       nbe.printStackTrace();
       Assert.fail();
@@ -382,10 +382,13 @@ public class NoeudTest {
       listeFichiers.add(new Fichier("Fic1.txt"));
       listeFichiers.add(new Fichier("Fic3.txt"));
 
-      Duplication duplication;
       List<NoeudConfiance> listeNoeudsConfiance = noeud.getListeNoeudsConfiance();
 
-      duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/Noeud");
+      /*
+      Duplication duplication;
+      duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/Noeud");*/
+      Registry registry = LocateRegistry.getRegistry(adresse);
+      Duplication duplication = (Duplication) registry.lookup("Noeud");
       listeNoeudsConfiance.add(new NoeudConfiance(adresse, duplication));
       noeud.recupererFichiersPerdus();
       Assert.assertNotNull(new FileReader(nomFichier));
@@ -393,9 +396,6 @@ public class NoeudTest {
     }
     catch (UnknownHostException uhe) {
       uhe.printStackTrace();
-    }    catch (MalformedURLException mue) {
-      mue.printStackTrace();
-      Assert.fail();
     }
     catch (NotBoundException nbe) {
       nbe.printStackTrace();
