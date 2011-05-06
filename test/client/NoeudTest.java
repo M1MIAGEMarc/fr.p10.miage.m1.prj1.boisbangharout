@@ -103,8 +103,8 @@ public class NoeudTest {
     List<NoeudConfiance> listeNoeudsConfiance = noeud.getListeNoeudsConfiance();
     try {
       InetAddress adress = Inet4Address.getLocalHost();
-      //adresse = adress.getHostAddress();
-      adresse = "172.19.1.37";
+      adresse = adress.getHostAddress();
+      //adresse = "172.19.1.37";
       noeud.ajouterNoeudConfiance(adresse);
       Assert.assertEquals(adresse, listeNoeudsConfiance.get(0).getAdresse());
     }

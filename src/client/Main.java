@@ -38,7 +38,6 @@ public class Main {
       Noeud noeud = new Noeud();
 
       // Démarrage du serveur
-      //Naming.rebind("rmi://" + adresse + "/Noeud", noeud);
       Duplication duplicationStub = (Duplication) UnicastRemoteObject.exportObject(noeud, 0);
       Registry registry = LocateRegistry.createRegistry(1099);
       registry.rebind("Noeud", duplicationStub);

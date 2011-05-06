@@ -4,13 +4,10 @@
  */
 package client;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -28,7 +25,8 @@ import java.util.logging.Logger;
 import serveur.Duplication;
 
 /**
- * Cette classe a pour but de modéliser la machine cliente
+ * Cette classe a pour but de modéliser un noeud.
+ * Elle contient des méthodes propres au client et propres au serveur.
  *
  * @author Marc Boisban
  * @author Kamel Gharout
@@ -64,12 +62,7 @@ public class Noeud implements Duplication {
     }
   }
 
-  /*
-  public NoeudClient(String adresse, List<Fichier> listeFichiers, List<NoeudConfiance> listeNoeudsConfiance) {
-  this.adresse = adresse;
-  this.listeFichiers = listeFichiers;
-  this.listeNoeudsConfiance = listeNoeudsConfiance;
-  }*/
+
   /****************************   Accesseurs   ********************************/
   /**
    * Renvoie l'adresse du noeud client
@@ -144,6 +137,10 @@ public class Noeud implements Duplication {
   }
 
   /****************************   Autres méthodes   ***************************/
+
+  
+  /****************************   Méthodes client   ***************************/
+
   /**
    * Permet d'affecter un degré de confidentialité à un fichier. Ce degré a pour but
    * de déterminer les noeuds de confiance sur lesquels le fichier en question peut
@@ -153,7 +150,7 @@ public class Noeud implements Duplication {
    * <ul>
    * <li> 1 : Peu confidentiel</li>
    * <li> 2 : Moyennent confidentiel</li>
-   * <li> 3 : Tr�s confidentiel</li>
+   * <li> 3 : Très confidentiel</li>
    * <li> 4 : Non duplicable (affecté par défaut lors de la création d'un objet Fichier)</li>
    * </ul>
    * @param nomFichier
@@ -191,7 +188,6 @@ public class Noeud implements Duplication {
     if (succes) {
       Registry registry = LocateRegistry.getRegistry(adresse);
       Duplication duplication = (Duplication) registry.lookup("Noeud");
-      //Duplication duplication = (Duplication) Naming.lookup("rmi://" + adresse + "/Noeud");
       NoeudConfiance noeudConfiance = new NoeudConfiance(adresse, duplication);
       listeNoeudsConfiance.add(noeudConfiance);
     }
@@ -261,7 +257,6 @@ public class Noeud implements Duplication {
               if (fichier.getNoeudsConfianceMap().containsKey(noeudConfiance.getAdresse())) {
                 if (fichier.getNoeudsConfianceMap().get(noeudConfiance.getAdresse())) {
                   Duplication duplication = noeudConfiance.getDuplication();
-                  //if (!duplication.getListeNomsFichiers().contains(adresse + "_" + fichier.getNom())) {
                     File file = new File(fichier.getNom());
                     fis = new FileInputStream(file);
                     try {
@@ -288,13 +283,11 @@ public class Noeud implements Duplication {
                     catch (IOException ioe) {
                       ioe.printStackTrace();
                     }
-                  //}
                 }
               }
               else {
                 if (noeudConfiance.getNiveauConfiance() >= fichier.getNiveauConfidentialite()) {
                   Duplication duplication = noeudConfiance.getDuplication();
-                  //if (!duplication.getListeNomsFichiers().contains(adresse + "_" + fichier.getNom())) {
                     File file = new File(fichier.getNom());
                     fis = new FileInputStream(file);
                     try {
@@ -321,7 +314,6 @@ public class Noeud implements Duplication {
                     catch (IOException ioe) {
                       ioe.printStackTrace();
                     }
-                  //}
                 }
               }
             }
@@ -437,7 +429,6 @@ public class Noeud implements Duplication {
             }
             if (!trouve) {
               noeudConfiance.getDuplication().supprimerFichier(nomFichier);
-              //System.out.println("Fichier '" + nomFichier + "' supprimé.");
             }
           }
         }
@@ -482,7 +473,6 @@ public class Noeud implements Duplication {
             }
 
             if (!trouve) {
-              //byte[] donnees = ecrireFichierPerdu(nouveauNomFichier, noeudConfiance.getDuplication().extraireDonnees(nomFichier));
               byte[] donnees = noeudConfiance.getDuplication().extraireDonnees(nomFichier);
               ecrireFichierPerdu(nouveauNomFichier, donnees);
               listeNomsFichiers.add(nouveauNomFichier);
@@ -507,8 +497,8 @@ public class Noeud implements Duplication {
    * @param nomFichier
    *        Le nom du fichier à créer sur la machine cliente
    *
-   * @param fichier
-   *        Le fichier à ecrire sur la machine cliente
+   * @param donnees
+   *        Les données à écrire côté client
    */
   public void ecrireFichierPerdu(String nomFichier, byte[] donnees) {
 
@@ -516,22 +506,10 @@ public class Noeud implements Duplication {
     File file = new File(nomFichier);
     //On supprime le fichier s'il existe déjà pour l'écrire ensuite (cela évite d'écrire plusieurs fois les même données dans le fichier)
     file.delete();
-    int i;
-    /*
-    for (i = 0; i < donnees.length; i++) {
-      if(donnees[i] == (byte)0)
-        break;
-    }*/
-    //System.out.println("i = " + i);
 
     try {
       file.createNewFile();
       FileOutputStream fos = new FileOutputStream(file);
-      /*
-      for (int j = 0; j < donnees.length; j++) {
-        if(donnees[j] != (byte)0)
-          fos.write(donnees[j]);
-      }*/
       fos.write(donnees);
       fos.flush();
       fos.close();
@@ -541,7 +519,8 @@ public class Noeud implements Duplication {
     }
   }
 
-  /****************************   Autres méthodes   ***************************/
+  /****************************   Méthodes serveur  ***************************/
+
   /**
    * Permet d'écrire un fichier sur le noeud de confiance.
    * Cette méthode écrit le paramètre données dans un fichier
@@ -551,11 +530,21 @@ public class Noeud implements Duplication {
    * @param  adresse
    *         L'adresse de provenance du fichier
    *
-   * @param  fichier
-   *         Le fichier à dupliquer
+   * @param  données
+   *         Les données du fichier à dupliquer
    *
    * @param  nomFichier
    *         Le nom du fichier dont on souhaite écrire le contenu
+   *
+   * @param offset
+   *        La position à partir de laquelle il faut ecrire les données dans le fichier
+   *
+   * @param nbOctetsLus
+   *        Le nombre d'octets ayant été préalablement lus
+   *
+   * @param debutFichier
+   *        Indique s'il s'agit du début du fichier (on créé le fichier en sortie s'il s'agit du début)
+   *
    *
    */
   @Override
@@ -569,18 +558,9 @@ public class Noeud implements Duplication {
       }
 
       FileWriter fw = new FileWriter(nouveauFichier, true);
-      /*
-      BufferedReader br = new BufferedReader(new FileReader(fichier));
-      BufferedWriter bw = new BufferedWriter(fw);
-       * */
+
       FileOutputStream fos = new FileOutputStream(nouveauFichier);
 
-      /*
-      while ((ligne = br.readLine()) != null) {
-      bw.write(ligne);
-      bw.flush();
-      }
-      bw.close();*/
       byte[] donnes1 = new byte[nbOctetsLus];
 
       for (int i = 0; i < donnes1.length; i++) {
@@ -592,7 +572,6 @@ public class Noeud implements Duplication {
       List<String> listeNomsFichiers = new ArrayList<String>();
       if (!listeNomsFichiers.contains(adresse + "_" + nomFichier));
       listeNomsFichiers.add(adresse + "_" + nomFichier);
-      //System.out.println("Fichier '" + adresse + "_" + nomFichier + "' ajouté.");
     }
     catch (IOException ioe) {
       ioe.printStackTrace();
@@ -610,14 +589,12 @@ public class Noeud implements Duplication {
   public void supprimerFichier(String nomFichier) {
     File file = new File(nomFichier);
     file.delete();
-    //listeNomsFichiers.remove(nomFichier);
     for (Fichier fichier : listeFichiers) {
       if (fichier.getNom().equals(nomFichier)) {
         listeFichiers.remove(fichier);
         break;
       }
     }
-    //System.out.println("Fichier '" + nomFichier + "' supprimé.");
   }
 
   /**
@@ -644,15 +621,12 @@ public class Noeud implements Duplication {
       fis = new FileInputStream(nomFichier);
 
       while ((nbOctetsLus = fis.read(donneesMax)) > 0) {
-        //duplication.ecrireFichier(adresse, donneesMax, fichier.getNom(), offset, nbOctetsLus, debutFichier);
-        //offset += nbOctetsLus;
         if(nbOctetsLus != -1)
           donneesRetournees = new byte[nbOctetsLus];
         if (nbOctetsLus < tailleMax) {
           break;
         } 
       }
-
       
       for (int i = 0; i < donneesRetournees.length - 1; i++) {
         donneesRetournees[i] = donneesMax[i];
