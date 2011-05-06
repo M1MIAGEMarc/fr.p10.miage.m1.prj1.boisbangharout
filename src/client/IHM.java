@@ -278,6 +278,10 @@ public class IHM {
     }
     System.out.println("\n1. Retourner au menu principal\n");
     //System.out.println("Appuyer sur n'importe quel chiffre pour ajouter un  noeud de confiance");
+    boolean succes;
+
+    do{
+      succes = true;
     System.out.println("Veuillez saisir l’adresse réseau du nouveau noeud de confiance :");
 
     scanner = new Scanner(System.in);
@@ -315,27 +319,35 @@ public class IHM {
 
             noeud.assignerConfiance(adresse, choix);
             System.out.println("Degrès de confiance modifié avec succès.\n");
-            noeud.dupliquerFichiers();
           }
+           noeud.dupliquerFichiers();
+
         }
+        revenir();
       }
       catch (MalformedURLException mue) {
         System.out.println("Erreur lors de l'ajout du noeud de confiance : adresse IP non valide.");
+        succes = false;
       }
       catch (ConnectException ce) {
         System.out.println("Erreur lors de l'ajout du noeud de confiance : service de noms de la machine distante non trouvé.");
+        succes = false;
       }
       catch (ConnectIOException ce) {
         System.out.println("Erreur lors de l'ajout du noeud de confiance : service de noms de la machine distante non trouvé.");
+        succes = false;
       }
       catch (NotBoundException ex) {
         System.out.println("Erreur lors de l'ajout du noeud de confiance : objet distant non trouvé.");
+        succes = false;
       }
       catch (UnknownHostException uhe) {
           System.out.println("Erreur lors de l'ajout du noeud de confiance : objet inconnu");
+          succes = false;
       }
       catch (IOException ioe) {
         ioe.printStackTrace();
+        succes = false;
       }
 
       //System.out.println("Appuyer sur entrée pour revenir au menu principal");
@@ -346,8 +358,8 @@ public class IHM {
       //catch (IOException ioe) {
       // ioe.printStackTrace();
       // }
-      revenir();
     }
+    }while(!succes);
     //revenir();
   }
 
