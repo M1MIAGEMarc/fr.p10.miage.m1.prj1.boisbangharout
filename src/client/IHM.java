@@ -236,9 +236,10 @@ public class IHM {
       System.out.println("Degré de confidentialité assigné avec succès.");
       revenir();
     }
+    /*
     else {
         menu();
-    }
+    }*/
   }
   //   }
   // while (choix < cpt);

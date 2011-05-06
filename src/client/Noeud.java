@@ -486,6 +486,8 @@ public class Noeud implements Duplication {
               byte[] donnees = noeudConfiance.getDuplication().extraireDonnees(nomFichier);
               ecrireFichierPerdu(nouveauNomFichier, donnees);
               listeNomsFichiers.add(nouveauNomFichier);
+              Fichier nouveauFichier = new Fichier(nouveauNomFichier);
+              listeFichiers.add(nouveauFichier);
             }
           }
         }
