@@ -363,7 +363,7 @@ public class IHM {
           System.out.println("Suppression d'un noeud de confiance pour le fichier");
           System.out.println("===================================================");
           System.out.println("Liste des noeuds de confiance dont la duplication est autorisée");
-          noeudFichierMap = noeud.getListeFichiers().get(choix).getNoeudsConfianceMap();
+          noeudFichierMap = noeud.getListeFichiers().get(choix - 1).getNoeudsConfianceMap();
 
           int niveauConfidentialite = noeud.getListeFichiers().get(choix - 1).getNiveauConfidentialite();
 
@@ -397,13 +397,13 @@ public class IHM {
             }
 
             cpt += 1;
-            System.out.println("\n   " + cpt + ". Retourner au menu principal");
+            System.out.println("\n   " + cpt + ". Retourner au menu précédent.");
 
             choix3 = saisir("\nVeuillez selectionner le noeud de confiance à supprimer pour le fichier :", cpt);
             if (choix3 < cpt) {
-              noeudFichierMap.put(listeAutorise.get(choix3 - 1), false);
+              //noeudFichierMap.put(listeAutorise.get(choix3 - 1), false);
+              noeud.supprimerNoeudConfianceFichier(noeud.getListeFichiers().get(choix - 1).getNom(), listeAutorise.get(choix3 -1));
               System.out.println("Le noeud a été supprimé");
-              listeAutorise.clear();
               if (choix3 != cpt) {
                 revenir();
               }
@@ -416,7 +416,7 @@ public class IHM {
           System.out.println("Ajout d'un noeud de confiance pour le fichier");
           System.out.println("===================================================\n");
           System.out.println("Liste des noeuds de confiance dont la duplication n'est pas autorisée");
-          noeudFichierMap = noeud.getListeFichiers().get(choix).getNoeudsConfianceMap();
+          noeudFichierMap = noeud.getListeFichiers().get(choix - 1).getNoeudsConfianceMap();
 
           int niveauConfidentialite = noeud.getListeFichiers().get(choix - 1).getNiveauConfidentialite();
 
@@ -451,21 +451,22 @@ public class IHM {
             }
 
             cpt += 1;
-            System.out.println("\n   " + cpt + ". Retourner au menu principal");
+            System.out.println("\n   " + cpt + ". Retourner au menu précédent.");
             choix4 = saisir("Veuillez selectionner le noeud de confiance à ajouter pour le fichier :", cpt);
        
             if (choix4 < cpt) {
-              noeudFichierMap.put(listeAutorise.get(choix4 - 1), true);
+              noeud.ajouterNoeudConfianceFichier(noeud.getListeFichiers().get(choix - 1).getNom(), listeAutorise.get(choix4 -1), true);
+              //noeudFichierMap.put(listeAutorise.get(choix4 - 1), true);
               System.out.println("Le noeud a été ajouté.");
-              listeAutorise.clear();
               if (choix4 != cpt) {
                 revenir();
               }
             }
           }
         }
+        listeAutorise.clear();
       }
-      while (choix != 1 && choix != 2 && choix != 3);
+      while (choix2 != 3);
     }
   }
 

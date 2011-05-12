@@ -392,7 +392,7 @@ public class Noeud implements Duplication {
 
     for (Fichier fichier : listeFichiers) {
       if (fichier.getNom().equals(nomFichier)) {
-        fichier.getNoeudsConfianceMap().remove(adresse);
+        fichier.getNoeudsConfianceMap().put(adresse, false);
         break;
       }
     }
